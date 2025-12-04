@@ -14,11 +14,24 @@ const { values, positionals } = parseArgs({
 });
 
 const year = Number(values.y);
-const month = Number(values.m);
+const month = Number(values.m) -1 ;
 
-for(let day=1; day <=30; day++){
-  new Date(year, month, day);
-  console.log(`${month}月 ${day}日 ${year}`);
-}
+const date = new Date(year, month)
+
+console.log(`${month}月 ${year}`)
 console.log('日 月 火 水 木 金 土');
+
+const first_day = new Date(year, month, 1).getDate();
+const end_of_month = new Date(year, month + 1, 0).getDate();
+
+// console.log(new Date(2025, 2, 0).getDate());
+
+console.log(first_day);
+console.log(end_of_month);
+
+
+// for(let i = 0; i < day.length; i+=7 ){
+//   const month_days = new Date(year, month, day);
+//   console.log(month_days.slice(i, i + 7));
+// }
 

@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import { log } from 'node:console';
 import { type } from 'node:os';
 import { parseArgs } from 'node:util';
 
@@ -30,41 +29,24 @@ for (let day = 1; day <= last_day; day++ ){
   all_days.push(day)
 }
 
-for (let num = 1; num <= first_wday; num++ ){
+for (let num = 1; num < first_wday; num++ ){
   all_days.unshift(null);
 }
 
-for (let i = 0; i < all_days.length; i += 7) {
-  const calender_days = all_days.slice(i, i + 7);
-  console.log(calender_days.join(" "));
+const eachSlice = (arr, n = 2, result = []) => {
+  if (arr.length === 0) {
+    return result;
+  }
+
+  result.push(arr.splice(0, n))
+  return eachSlice(arr, n, result)
 }
 
-// console.log(all_days.join(" "));
+const calender_days = eachSlice(all_days, 7);
 
-// for (let i = 0; i < all_days.length; i += 7){
-//   console/log(all_days.slice(i, i + 7));
-// }
+console.group(calender_days);
 
-// const calender_days = (all_days.join(" "));
-
-// let limit = 7;
-// let newText = "";
-// for (let i = 0; i < calender_days.length; i += limit) {
-//   newText += calender_days.substring(i, i + limit) + "\n";
-// }
-// console.log(newText);
-
-
-// const eachSlice = (arr, n = 2, result = []) => {
-//   if (arr.length === 0) {
-//     return result;
-//   }
-
-//   result.push(arr.splice(0, n))
-//   return eachSlice(arr, n, result)
-// }
-
-// console.log(eachSlice(calender_days, 7));
+console.log(calender_days.join(" "));
 
 // console.log(all_days);
 

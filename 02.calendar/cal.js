@@ -43,6 +43,14 @@ for (let num = 1; num <= first_wday; num++ ){
 
 for (let i = 0; i < all_days.length; i += 7) {
   const calender_days = (all_days.slice(i, i + 7));
-  const result = calender_days.map(n => String(n).padStart(2, " "));
+
+  const result = calender_days.map(n => {
+    if (n === null) {
+      return String(n).replace("null", " ").padStart(2, " ");
+    }else{
+      return String(n).padStart(2, " ");
+    }
+  });
+
   console.log(result.join(" "));
 }

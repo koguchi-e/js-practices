@@ -19,9 +19,10 @@ const year =
 const month =
   inputValues.m !== undefined ? Number(inputValues.m) : today.getMonth() + 1;
 
-const title = `${month}月 ${year}`;
+const monthStr = String(month);
+const title = `${monthStr}月 ${year}`;
 
-console.log(title.padStart(14, " "));
+console.log(title.padStart(monthStr.length === 1 ? 13 : 14, " "));
 console.log("日 月 火 水 木 金 土");
 
 const first_wday = new Date(year, month - 1, 1).getDay();

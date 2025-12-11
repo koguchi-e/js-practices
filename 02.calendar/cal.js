@@ -13,19 +13,11 @@ const { values: inputValues } = parseArgs({
 
 const today = new Date();
 
-let year;
-if (inputValues.y !== undefined) {
-  year = Number(inputValues.y);
-} else {
-  year = today.getFullYear();
-}
+const year =
+  inputValues.y !== undefined ? Number(inputValues.y) : today.getFullYear();
 
-let month;
-if (inputValues.m !== undefined) {
-  month = Number(inputValues.m);
-} else {
-  month = today.getMonth() + 1;
-}
+const month =
+  inputValues.m !== undefined ? Number(inputValues.m) : today.getMonth() + 1;
 
 const title = `${month}月 ${year}`;
 

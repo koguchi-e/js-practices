@@ -2,7 +2,7 @@
 
 import { parseArgs } from "node:util";
 
-const options = {
+const parseArgsOptions = {
   y: { type: "string" },
   m: { type: "string" },
 };
@@ -11,7 +11,7 @@ const today = new Date();
 
 const { values } = parseArgs({
   args: process.argv.slice(2),
-  options,
+  parseArgsOptions,
 });
 
 let year;

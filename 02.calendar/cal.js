@@ -7,23 +7,22 @@ const parseArgsConfig = {
   m: { type: "string" },
 };
 
-const today = new Date();
-
-const { values } = parseArgs({
-  args: process.argv.slice(2),
-  parseArgsConfig,
+const { values: inputValues } = parseArgs({
+  options: parseArgsConfig,
 });
 
+const today = new Date();
+
 let year;
-if (values.y !== undefined) {
-  year = Number(values.y);
+if (inputValues.y !== undefined) {
+  year = Number(inputValues.y);
 } else {
   year = today.getFullYear();
 }
 
 let month;
-if (values.m !== undefined) {
-  month = Number(values.m);
+if (inputValues.m !== undefined) {
+  month = Number(inputValues.m);
 } else {
   month = today.getMonth() + 1;
 }

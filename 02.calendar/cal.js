@@ -25,28 +25,28 @@ const title = `${monthStr}月 ${year}`;
 console.log(title.padStart(monthStr.length === 1 ? 13 : 14, " "));
 console.log("日 月 火 水 木 金 土");
 
-const firstDayOfWeek = new Date(year, month - 1, 1).getDay();
-const lastDay = new Date(year, month, 0).getDate();
+const firstDay = new Date(year, month - 1, 1);
+const lastDay = new Date(year, month, 0);
 
 const allDays = [];
-for (let day = 1; day <= lastDay; day++) {
-  allDays.push(day);
+
+for (let num = 1; num <= firstDay.getDay(); num++) {
+  allDays.push(null);
 }
 
-for (let num = 1; num <= firstDayOfWeek; num++) {
-  allDays.unshift(null);
+while (firstDay.getMonth() === month - 1) {
+  allDays.push(new Date(firstDay));
+  firstDay.setDate(firstDay.getDate() + 1);
 }
 
 for (let i = 0; i < allDays.length; i += 7) {
-  const calendarDays = allDays.slice(i, i + 7);
+  const sliceDays = allDays.slice(i, i + 7);
 
-  const result = calendarDays.map((n) => {
-    if (n === null) {
-      return String(n).replace("null", " ").padStart(2, " ");
-    } else {
-      return String(n).padStart(2, " ");
-    }
+  const outputCalendarDays = sliceDays.map((n) => {
+    return n === null
+      ? String(n).replace("null", " ").padStart(2, " ")
+      : String(n.getDate()).padStart(2, " ");
   });
 
-  console.log(result.join(" "));
+  console.log(outputCalendarDays.join(" "));
 }

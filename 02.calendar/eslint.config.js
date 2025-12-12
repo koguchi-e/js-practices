@@ -1,9 +1,15 @@
+import js from "@eslint/js";
 import globals from "globals";
-import pluginJs from "@eslint/js";
-import eslintConfigPrettier from "eslint-config-prettier";
+import { defineConfig } from "eslint/config";
 
-export default [
-  { languageOptions: { globals: globals.nodeBuiltin } },
-  pluginJs.configs.recommended,
-  eslintConfigPrettier,
-];
+export default defineConfig([
+  {
+    files: ["**/*.{js,mjs,cjs}"],
+    plugins: { js },
+    extends: ["js/recommended"],
+    languageOptions: {
+      globals: { ...globals.browser, ...globals.node },
+      sourceType: "module",
+    },
+  },
+]);

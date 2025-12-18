@@ -9,28 +9,18 @@ function successFlow() {
     setTimeout(() => {
       db.run(
         "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL)",
-        (err) => {
-          if (err) return reject(err);
-
+        () => {
           const stmt = db.prepare("INSERT INTO books (title) VALUES (?)");
 
-          stmt.run(["走れメロス"], function (err) {
-            if (err) return reject(err);
-
-            stmt.run(["こころ"], function (err) {
-              if (err) return reject(err);
-
-              stmt.run(["山月記"], function (err) {
+          stmt.run(["走れメロス"], function () {
+            stmt.run(["こころ"], function () {
+              stmt.run(["山月記"], function () {
                 stmt.finalize();
-                if (err) return reject(err);
-
                 db.all(
                   "SELECT id, title FROM books ORDER BY id",
                   (err, rows) => {
-                    db.run("DROP TABLE books", (err) => {
-                      if (err) return reject(err);
+                    db.run("DROP TABLE books", () => {
                       resolve(rows);
-                      // reject(err);
                     });
                   },
                 );
@@ -43,12 +33,43 @@ function successFlow() {
   });
 }
 
-successFlow()
-  .then((rows) => {
-    rows.forEach((row) => {
-      console.log(row.id + ": " + row.title);
-    });
-  })
-  .catch((err) => {
-    console.error("失敗", err.message);
+successFlow().then((rows) => {
+  rows.forEach((row) => {
+    console.log(row.id + ": " + row.title);
   });
+});
+
+// エラーあり
+function failureFlow() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      db.run(
+        "CREATE TABLE books2 (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL)",
+        () => {
+          const stmt = db.prepare("INSERT INTO books2 (title) VALUES (?)");
+          stmt.run([null], function (insertErr, rows) {
+            stmt.finalize();
+
+            if (insertErr) {
+              db.all("SELECT author FROM books2", (selectErr, rows) => {
+                db.run("DROP TABLE books2", () => {
+                  reject({ insertErr, selectErr });
+                });
+              });
+              return;
+            }
+          });
+        },
+      );
+    }, 1000);
+  });
+}
+
+failureFlow().catch((err) => {
+  if (err.insertErr) {
+    console.error("失敗", err.insertErr.message);
+  }
+  if (err.selectErr) {
+    console.error("失敗", err.selectErr.message);
+  }
+});

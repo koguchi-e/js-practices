@@ -20,6 +20,7 @@ function successFlow() {
                   "SELECT id, title FROM books ORDER BY id",
                   (err, rows) => {
                     db.run("DROP TABLE books", () => {
+                      if (err) return reject(err);
                       resolve(rows);
                     });
                   },
@@ -47,11 +48,11 @@ function failureFlow() {
         "CREATE TABLE books2 (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL)",
         () => {
           const stmt = db.prepare("INSERT INTO books2 (title) VALUES (?)");
-          stmt.run([null], function (insertErr, rows) {
+          stmt.run([null], function (insertErr) {
             stmt.finalize();
 
             if (insertErr) {
-              db.all("SELECT author FROM books2", (selectErr, rows) => {
+              db.all("SELECT author FROM books2", (selectErr) => {
                 db.run("DROP TABLE books2", () => {
                   reject({ insertErr, selectErr });
                 });
@@ -67,9 +68,9 @@ function failureFlow() {
 
 failureFlow().catch((err) => {
   if (err.insertErr) {
-    console.error("失敗", err.insertErr.message);
+    console.error("エラー：", err.insertErr.message);
   }
   if (err.selectErr) {
-    console.error("失敗", err.selectErr.message);
+    console.error("エラー：", err.selectErr.message);
   }
 });

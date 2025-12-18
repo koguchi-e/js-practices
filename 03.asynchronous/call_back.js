@@ -28,10 +28,6 @@ function successFlow(callback) {
 }
 
 successFlow((err, rows) => {
-  if (err) {
-    console.error("失敗", err.message);
-    return;
-  }
   rows.forEach((row) => {
     console.log(row.id + ": " + row.title);
   });
@@ -67,6 +63,6 @@ function failureFlow(callback) {
 
 failureFlow((err) => {
   if (err) {
-    console.error("エラー:", err.message);
+    console.error("エラー：", err.message);
   }
 });

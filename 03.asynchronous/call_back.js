@@ -5,26 +5,48 @@ const db = new sqlite3.Database(":memory:");
 
 function makeTableCallback(callback) {
   setTimeout(() => {
-    const success = true;
-    if (success) {
-      db.run("CREATE TABLE books (id INT, title TEXT)", () => {
-        const stmt = db.prepare("INSERT INTO books VALUES (?, ?)");
-        stmt.run([1, "走れメロス"], () => {
-          db.get("SELECT rowid AS id, title FROM books", (err, row) => {
-            callback(null, row);
+    db.run("CREATE TABLE books (id INT, title TEXT)", (err) => {
+      if (err) {
+        callback(err);
+        return;
+      }
+      const stmt = db.prepare("INSERT INTO books VALUES (?, ?)");
+      stmt.run([1, "走れメロス"], (err) => {
+        if (err) {
+          callback(err);
+          return;
+        }
+        stmt.run([2, "こころ"], (err) => {
+          if (err) {
+            callback(err);
+            return;
+          }
+          stmt.run([3, "山月記"], (err) => {
+            stmt.finalize();
+            if (err) {
+              callback(err);
+              return;
+            }
+            db.all("SELECT id, title FROM books ORDER BY id", (err, rows) => {
+              if (err) {
+                callback(err);
+                return;
+              }
+              callback(null, rows);
+            });
           });
         });
       });
-    } else {
-      callback(new Error("失敗しました"));
-    }
+    });
   }, 1000);
 }
 
-makeTableCallback((err, value) => {
+makeTableCallback((err, rows) => {
   if (err) {
     console.error("エラー:", err);
     return;
   }
-  console.log(value.id + ": " + value.title);
+  rows.forEach((row) => {
+    console.log(row.id + ": " + row.title);
+  });
 });

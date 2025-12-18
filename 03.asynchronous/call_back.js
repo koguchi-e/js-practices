@@ -30,11 +30,13 @@ function makeTableCallback(callback) {
                 return;
               }
               db.all("SELECT id, title FROM books ORDER BY id", (err, rows) => {
-                if (err) {
-                  callback(err);
-                  return;
-                }
-                callback(null, rows);
+                db.run("DROP TABLE books", (err) => {
+                  if (err) {
+                    callback(err);
+                    return;
+                  }
+                  callback(null, rows);
+                });
               });
             });
           });

@@ -15,11 +15,7 @@ function successFlow(callback) {
             stmt.run(["山月記"], function () {
               stmt.finalize();
               db.all("SELECT id, title FROM books ORDER BY id", (err, rows) => {
-                db.run("DROP TABLE books", (err) => {
-                  if (err) {
-                    callback(new Error("失敗しました"));
-                    return;
-                  }
+                db.run("DROP TABLE books", () => {
                   callback(null, rows);
                 });
               });
@@ -33,7 +29,7 @@ function successFlow(callback) {
 
 successFlow((err, rows) => {
   if (err) {
-    console.error("エラー:", err.message);
+    console.error("失敗", err.message);
     return;
   }
   rows.forEach((row) => {
@@ -45,31 +41,32 @@ successFlow((err, rows) => {
 function failureFlow(callback) {
   setTimeout(() => {
     db.run(
-      "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL)",
-      () => {
-        const stmt = db.prepare("INSERT INTO books (title) VALUES (?)");
-        stmt.run([null], function () {
-          db.all("SELECT id, title FROM books ORDER BY id", (err, rows) => {
-            db.run("DROP TABLE books", () => {
-              if (err) {
-                callback(new Error("失敗しました"));
-                return;
-              }
-              callback(null, rows);
+      "CREATE TABLE books2 (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL)",
+      (err) => {
+        if (err) return callback(err);
+
+        const stmt = db.prepare("INSERT INTO books2 (title) VALUES (?)");
+        stmt.run([null], function (insertErr) {
+          stmt.finalize();
+
+          if (insertErr) {
+            db.all("SELECT author FROM books2", (selectErr) => {
+              db.run("DROP TABLE books2", () => {
+                callback(insertErr);
+                callback(selectErr);
+              });
             });
-          });
+            return;
+          }
+          callback(null);
         });
       },
     );
   }, 1000);
 }
 
-failureFlow((err, rows) => {
+failureFlow((err) => {
   if (err) {
     console.error("エラー:", err.message);
-    return;
   }
-  rows.forEach((row) => {
-    console.log(row.id + ": " + row.title);
-  });
 });

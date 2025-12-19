@@ -21,7 +21,7 @@ const month =
 
 const title = `${month}月 ${year}`;
 
-console.log(title.padStart(month.length === 1 ? 13 : 14, " "));
+console.log("      " + title);
 console.log("日 月 火 水 木 金 土");
 
 const firstDate = new Date(year, month - 1, 1);

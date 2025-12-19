@@ -27,7 +27,7 @@ console.log("日 月 火 水 木 金 土");
 const firstDate = new Date(year, month - 1, 1);
 const monthDates = [];
 
-for (let num = 1; num <= firstDate.getDay(); num++) {
+for (let wday = 1; wday <= firstDate.getDay(); wday++) {
   monthDates.push(null);
 }
 
@@ -36,8 +36,8 @@ while (firstDate.getMonth() === month - 1) {
   firstDate.setDate(firstDate.getDate() + 1);
 }
 
-for (let i = 0; i < monthDates.length; i += 7) {
-  const sliceDays = monthDates.slice(i, i + 7);
+for (let weekIndex = 0; weekIndex < monthDates.length; weekIndex += 7) {
+  const sliceDays = monthDates.slice(weekIndex, weekIndex + 7);
 
   const outputCalendarDays = sliceDays.map((n) => {
     return n === null ? "  " : n.getDate().toString().padStart(2, " ");

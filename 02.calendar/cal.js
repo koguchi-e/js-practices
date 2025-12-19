@@ -25,20 +25,20 @@ const title = `${monthStr}月 ${year}`;
 console.log(title.padStart(monthStr.length === 1 ? 13 : 14, " "));
 console.log("日 月 火 水 木 金 土");
 
-const firstDay = new Date(year, month - 1, 1);
-const allDays = [];
+const firstDate = new Date(year, month - 1, 1);
+const monthDates = [];
 
-for (let num = 1; num <= firstDay.getDay(); num++) {
-  allDays.push(null);
+for (let num = 1; num <= firstDate.getDay(); num++) {
+  monthDates.push(null);
 }
 
-while (firstDay.getMonth() === month - 1) {
-  allDays.push(new Date(firstDay));
-  firstDay.setDate(firstDay.getDate() + 1);
+while (firstDate.getMonth() === month - 1) {
+  monthDates.push(new Date(firstDate));
+  firstDate.setDate(firstDate.getDate() + 1);
 }
 
-for (let i = 0; i < allDays.length; i += 7) {
-  const sliceDays = allDays.slice(i, i + 7);
+for (let i = 0; i < monthDates.length; i += 7) {
+  const sliceDays = monthDates.slice(i, i + 7);
 
   const outputCalendarDays = sliceDays.map((n) => {
     return n === null ? "  " : n.getDate().toString().padStart(2, " ");

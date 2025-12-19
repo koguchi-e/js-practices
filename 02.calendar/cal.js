@@ -25,16 +25,16 @@ const title = `${monthStr}月 ${year}`;
 console.log(title.padStart(monthStr.length === 1 ? 13 : 14, " "));
 console.log("日 月 火 水 木 金 土");
 
-const date = new Date(year, month - 1, 1);
+const firstDay = new Date(year, month - 1, 1);
 const allDays = [];
 
-for (let num = 1; num <= date.getDay(); num++) {
+for (let num = 1; num <= firstDay.getDay(); num++) {
   allDays.push(null);
 }
 
-while (date.getMonth() === month - 1) {
-  allDays.push(new Date(date));
-  date.setDate(date.getDate() + 1);
+while (firstDay.getMonth() === month - 1) {
+  allDays.push(new Date(firstDay));
+  firstDay.setDate(firstDay.getDate() + 1);
 }
 
 for (let i = 0; i < allDays.length; i += 7) {

@@ -31,9 +31,12 @@ for (let wday = 1; wday <= firstDate.getDay(); wday++) {
   monthDates.push(null);
 }
 
-while (firstDate.getMonth() === month - 1) {
+for (
+  ;
+  firstDate.getMonth() === month - 1;
+  firstDate.setDate(firstDate.getDate() + 1)
+) {
   monthDates.push(new Date(firstDate));
-  firstDate.setDate(firstDate.getDate() + 1);
 }
 
 for (let weekIndex = 0; weekIndex < monthDates.length; weekIndex += 7) {

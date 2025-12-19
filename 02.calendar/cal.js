@@ -40,7 +40,7 @@ for (let weekIndex = 0; weekIndex < monthDates.length; weekIndex += 7) {
   const sliceDays = monthDates.slice(weekIndex, weekIndex + 7);
 
   const outputCalendarDays = sliceDays.map((n) =>
-    n === null ? "  " : n.getDate().toString().padStart(2, " "),
+    n !== null ? n.getDate().toString().padStart(2, " ") : "  ",
   );
 
   console.log(outputCalendarDays.join(" "));

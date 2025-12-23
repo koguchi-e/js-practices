@@ -12,7 +12,6 @@ const { values: inputValues } = parseArgs({
 });
 
 const today = new Date();
-
 const year =
   inputValues.y !== undefined ? Number(inputValues.y) : today.getFullYear();
 
@@ -20,7 +19,6 @@ const month =
   inputValues.m !== undefined ? Number(inputValues.m) : today.getMonth() + 1;
 
 const title = `${month}月 ${year}`;
-
 console.log("      " + title);
 console.log("日 月 火 水 木 金 土");
 

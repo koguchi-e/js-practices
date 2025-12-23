@@ -37,7 +37,7 @@ for (
   monthDates.push(new Date(firstDate));
 }
 
-function formatCalenderCell(cell) {
+function formatCalendarCell(cell) {
   if (cell === null) {
     return "  ";
   }
@@ -46,6 +46,6 @@ function formatCalenderCell(cell) {
 
 for (let weekIndex = 0; weekIndex < monthDates.length; weekIndex += 7) {
   const weekCells = monthDates.slice(weekIndex, weekIndex + 7);
-  const formattedWeek = weekCells.map(formatCalenderCell);
+  const formattedWeek = weekCells.map(formatCalendarCell);
   console.log(formattedWeek.join(" "));
 }

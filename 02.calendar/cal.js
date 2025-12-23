@@ -39,12 +39,15 @@ for (
   monthDates.push(new Date(firstDate));
 }
 
+function formatCalenderCell(cell) {
+  if (cell === null) {
+    return "  ";
+  }
+  return cell.getDate().toString().padStart(2, " ");
+}
+
 for (let weekIndex = 0; weekIndex < monthDates.length; weekIndex += 7) {
-  const sliceDays = monthDates.slice(weekIndex, weekIndex + 7);
-
-  const outputCalendarDays = sliceDays.map((n) =>
-    n !== null ? n.getDate().toString().padStart(2, " ") : "  ",
-  );
-
-  console.log(outputCalendarDays.join(" "));
+  const weekCells = monthDates.slice(weekIndex, weekIndex + 7);
+  const formattedWeek = weekCells.map(formatCalenderCell);
+  console.log(formattedWeek.join(" "));
 }

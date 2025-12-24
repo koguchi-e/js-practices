@@ -10,9 +10,9 @@ function successFlow(callback) {
       "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL)",
       () => {
         const stmt = db.prepare("INSERT INTO books (title) VALUES (?)");
-        stmt.run(["走れメロス"], function () {
-          stmt.run(["こころ"], function () {
-            stmt.run(["山月記"], function () {
+        stmt.run(["走れメロス"], () => {
+          stmt.run(["こころ"], () => {
+            stmt.run(["山月記"], () => {
               stmt.finalize();
               db.all("SELECT id, title FROM books ORDER BY id", (err, rows) => {
                 db.run("DROP TABLE books", () => {
@@ -42,7 +42,7 @@ function failureFlow(callback) {
         if (err) return callback(err);
 
         const stmt = db.prepare("INSERT INTO books2 (title) VALUES (?)");
-        stmt.run([null], function (insertErr) {
+        stmt.run([null], (insertErr) => {
           stmt.finalize();
 
           if (insertErr) {

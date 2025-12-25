@@ -33,27 +33,17 @@ runBooksFlow((err, rows) => {
   });
 });
 
-// エラーあり
-function runBooks2Flow(callback) {
+// エラーあり：レコードの追加
+function insertError(callback) {
   setTimeout(() => {
     db.run(
       "CREATE TABLE books2 (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL)",
       (err) => {
         if (err) return callback(err);
-
-        const stmt = db.prepare("INSERT INTO books2 (title) VALUES (?)");
-        stmt.run([null], (insertErr) => {
-          stmt.finalize();
-
-          if (insertErr) {
-            db.all("SELECT author FROM books2", (selectErr) => {
-              db.run("DROP TABLE books2", () => {
-                callback(insertErr);
-                callback(selectErr);
-              });
-            });
-            return;
-          }
+        db.run("INSERT INTO books2 (title) VALUES (null)", (err) => {
+          db.run("DROP TABLE books2", () => {
+            callback(err);
+          });
           callback(null);
         });
       },
@@ -61,8 +51,34 @@ function runBooks2Flow(callback) {
   }, 1000);
 }
 
-runBooks2Flow((err) => {
+insertError((err) => {
   if (err) {
-    console.error("エラー：", err.message);
+    console.error("INSERTエラー：", err.message);
+  }
+});
+
+// エラーあり：レコードの追加
+function selectError(callback) {
+  setTimeout(() => {
+    db.run(
+      "CREATE TABLE books3 (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL)",
+      (err) => {
+        if (err) return callback(err);
+        db.run("INSERT INTO books3 (title) VALUES ('走れメロス')", () => {
+          db.all("SELECT id, author FROM books3", (err) => {
+            db.run("DROP TABLE books3", () => {
+              callback(err);
+            });
+          });
+          callback(null);
+        });
+      },
+    );
+  }, 1000);
+}
+
+selectError((err) => {
+  if (err) {
+    console.error("SELECTエラー：", err.message);
   }
 });

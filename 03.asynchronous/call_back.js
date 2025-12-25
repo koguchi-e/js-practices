@@ -4,7 +4,7 @@ import sqlite3 from "sqlite3";
 const db = new sqlite3.Database(":memory:");
 
 // エラーなし
-function successFlow(callback) {
+function runBooksFlow(callback) {
   setTimeout(() => {
     db.run(
       "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL)",
@@ -27,14 +27,14 @@ function successFlow(callback) {
   }, 1000);
 }
 
-successFlow((err, rows) => {
+runBooksFlow((err, rows) => {
   rows.forEach((row) => {
     console.log(row.id + ": " + row.title);
   });
 });
 
 // エラーあり
-function failureFlow(callback) {
+function runBooks2Flow(callback) {
   setTimeout(() => {
     db.run(
       "CREATE TABLE books2 (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL)",
@@ -61,7 +61,7 @@ function failureFlow(callback) {
   }, 1000);
 }
 
-failureFlow((err) => {
+runBooks2Flow((err) => {
   if (err) {
     console.error("エラー：", err.message);
   }

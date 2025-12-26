@@ -2,6 +2,13 @@
 
 import { parseArgs } from "node:util";
 
+function formatCalendarCell(cell) {
+  if (cell === null) {
+    return "  ";
+  }
+  return cell.getDate().toString().padStart(2, " ");
+}
+
 const parseArgsConfig = {
   y: { type: "string" },
   m: { type: "string" },
@@ -37,13 +44,6 @@ for (
   currentDate.setDate(currentDate.getDate() + 1)
 ) {
   monthDates.push(new Date(currentDate));
-}
-
-function formatCalendarCell(cell) {
-  if (cell === null) {
-    return "  ";
-  }
-  return cell.getDate().toString().padStart(2, " ");
 }
 
 for (

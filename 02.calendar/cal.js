@@ -25,16 +25,18 @@ console.log("日 月 火 水 木 金 土");
 const firstDate = new Date(year, month - 1, 1);
 const monthDates = [];
 
-for (let wday = 1; wday <= firstDate.getDay(); wday++) {
+for (let leadingBlank = 1; leadingBlank <= firstDate.getDay(); leadingBlank++) {
   monthDates.push(null);
 }
 
+const currentDate = new Date(firstDate);
+
 for (
   ;
-  firstDate.getMonth() === month - 1;
-  firstDate.setDate(firstDate.getDate() + 1)
+  currentDate.getMonth() === month - 1;
+  currentDate.setDate(currentDate.getDate() + 1)
 ) {
-  monthDates.push(new Date(firstDate));
+  monthDates.push(new Date(currentDate));
 }
 
 function formatCalendarCell(cell) {
@@ -44,8 +46,12 @@ function formatCalendarCell(cell) {
   return cell.getDate().toString().padStart(2, " ");
 }
 
-for (let weekIndex = 0; weekIndex < monthDates.length; weekIndex += 7) {
-  const weekCells = monthDates.slice(weekIndex, weekIndex + 7);
-  const formattedWeek = weekCells.map(formatCalendarCell);
+for (
+  let weekStartIndex = 0;
+  weekStartIndex < monthDates.length;
+  weekStartIndex += 7
+) {
+  const weekDates = monthDates.slice(weekStartIndex, weekStartIndex + 7);
+  const formattedWeek = weekDates.map(formatCalendarCell);
   console.log(formattedWeek.join(" "));
 }

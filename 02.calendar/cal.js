@@ -19,7 +19,7 @@ const month =
   inputValues.m !== undefined ? Number(inputValues.m) : today.getMonth() + 1;
 
 const title = `${month}月 ${year}`;
-console.log("      " + title);
+console.log(`      ${title}`);
 console.log("日 月 火 水 木 金 土");
 
 const firstDate = new Date(year, month - 1, 1);

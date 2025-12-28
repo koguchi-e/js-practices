@@ -43,25 +43,16 @@ executeSql(
   .then(() => insertBook("走れメロス"))
   .then(() => insertBook("こころ"))
   .then(() => insertBook("山月記"))
+  .then(() => {
+    console.log("レコードを取得し、それを標準出力に出力する");
+  })
+  .then(() => selectAll("SELECT id, title FROM books ORDER BY id"))
+  .then((rows) => {
+    rows.forEach((row) => {
+      console.log(row.id + ": " + row.title);
+    });
+  })
   .then(() => executeSql("DROP TABLE books"))
-  .then(() =>
-    executeSql(
-      "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
-    )
-      .then(() => {
-        console.log("レコードを取得し、それを標準出力に出力する");
-      })
-      .then(() => executeSql("INSERT INTO books (title) VALUES ('走れメロス')"))
-      .then(() => executeSql("INSERT INTO books (title) VALUES ('こころ')"))
-      .then(() => executeSql("INSERT INTO books (title) VALUES ('山月記')"))
-      .then(() => selectAll("SELECT id, title FROM books ORDER BY id"))
-      .then((rows) => {
-        rows.forEach((row) => {
-          console.log(row.id + ": " + row.title);
-        });
-      })
-      .then(() => executeSql("DROP TABLE books")),
-  )
   // エラーあり：レコードの追加
   .then(() =>
     executeSql(

@@ -32,7 +32,7 @@ console.log("日 月 火 水 木 金 土");
 const firstDate = new Date(year, month - 1, 1);
 const monthDates = [];
 
-for (let leadingBlank = 1; leadingBlank <= firstDate.getDay(); leadingBlank++) {
+for (let i = 0; i < firstDate.getDay(); i++) {
   monthDates.push(null);
 }
 

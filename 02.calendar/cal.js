@@ -9,6 +9,10 @@ function formatCalendarCell(cell) {
   return cell.getDate().toString().padStart(2, " ");
 }
 
+function formatWeek(weekDates) {
+  return weekDates.map(formatCalendarCell).join(" ");
+}
+
 const parseArgsConfig = {
   y: { type: "string" },
   m: { type: "string" },
@@ -44,12 +48,14 @@ for (
   monthDates.push(new Date(currentDate));
 }
 
-for (
-  let weekStartIndex = 0;
-  weekStartIndex < monthDates.length;
-  weekStartIndex += 7
-) {
-  const weekDates = monthDates.slice(weekStartIndex, weekStartIndex + 7);
-  const formattedWeek = weekDates.map(formatCalendarCell);
-  console.log(formattedWeek.join(" "));
+const lines = [];
+
+for (let i = 0; i < monthDates.length; i += 7) {
+  const weekDates = monthDates.slice(i, i + 7);
+  lines.push(formatWeek(weekDates));
+}
+
+for (let i = 0; i < lines.length; i++) {
+  const line = lines[i];
+  console.log(line);
 }

@@ -36,10 +36,8 @@ for (let i = 0; i < firstDate.getDay(); i++) {
   monthDates.push(null);
 }
 
-const currentDate = new Date(firstDate);
-
 for (
-  ;
+  let currentDate = new Date(firstDate);
   currentDate.getMonth() === month - 1;
   currentDate.setDate(currentDate.getDate() + 1)
 ) {

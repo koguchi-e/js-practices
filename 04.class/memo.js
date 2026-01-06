@@ -46,7 +46,8 @@ db.serialize(function () {
     db.each(
       "SELECT * FROM memos",
       (err, row) => {
-        console.log(row.memo);
+        const firstLine = row.memo.split("\n")[0];
+        console.log(firstLine);
       },
       () => {
         db.close();

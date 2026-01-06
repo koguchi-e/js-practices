@@ -3,8 +3,8 @@
 import sqlite3 from "sqlite3";
 import { parseArgs } from "node:util";
 import readline from "node:readline";
-
-const db = new sqlite3.Database("memo.db");
+import enquirer from "enquirer";
+const { Select } = enquirer;
 
 const { values, positionals } = parseArgs({
   options: {
@@ -15,43 +15,78 @@ const { values, positionals } = parseArgs({
   allowPositionals: true,
 });
 
-db.serialize(function () {
-  db.run(
-    "CREATE TABLE IF NOT EXISTS memos (id INTEGER PRIMARY KEY AUTOINCREMENT, memo TEXT UNIQUE NOT NULL)",
-  );
+function main() {
+  const db = new sqlite3.Database("memo.db");
 
-  if (!values.l && !values.r && !values.d) {
-    const stmt = db.prepare("INSERT INTO memos (memo) VALUES (?)");
-    let inputString = "";
-
-    const reader = readline.createInterface({
-      input: process.stdin,
-    });
-
-    reader.on("line", (line) => {
-      inputString += line + "\n";
-    });
-
-    reader.on("close", () => {
-      stmt.run(inputString, () => {
-        console.log("以下メモが登録されました----");
-        console.log(inputString);
-        stmt.finalize();
-        db.close();
-      });
-    });
-  }
-  if (values.l) {
-    console.log("メモ一覧----");
-    db.each(
-      "SELECT * FROM memos",
-      (err, row) => {
-        const firstLine = row.memo.split("\n")[0];
-        console.log(firstLine);
-      },
-      () => {
-        db.close();
-      },
+  db.serialize(() => {
+    db.run(
+      "CREATE TABLE IF NOT EXISTS memos (id INTEGER PRIMARY KEY AUTOINCREMENT, memo TEXT NOT NULL)",
     );
-  }
-});
+
+    if (!values.l && !values.r && !values.d) {
+      const stmt = db.prepare("INSERT INTO memos (memo) VALUES (?)");
+      let inputString = "";
+
+      const reader = readline.createInterface({
+        input: process.stdin,
+      });
+
+      reader.on("line", (line) => {
+        inputString += line + "\n";
+      });
+
+      reader.on("close", () => {
+        stmt.run(inputString, () => {
+          console.log("以下メモが登録されました----");
+          console.log(inputString);
+          stmt.finalize();
+          db.close();
+        });
+      });
+    } else if (values.l) {
+      console.log("メモ一覧----");
+      db.each(
+        "SELECT * FROM memos",
+        (err, row) => {
+          console.log(`[${row.id}] ${row.memo.split("\n")[0]}`);
+        },
+        () => {
+          db.close();
+        },
+      );
+    } else if (values.d) {
+      db.all("SELECT * FROM memos", (err, rows) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        const choices = rows.map((row) => ({
+          name: `[${row.id}] ${row.memo.split("\n")[0]}`,
+        }));
+
+        const prompt = new Select({
+          name: "memo",
+          message: "削除するメモを選択してください。",
+          choices,
+        });
+
+        prompt
+          .run()
+          .then((selected) => {
+            console.log("選択結果：", selected);
+            const id = Number(selected.match(/^\[(\d+)\]/)[1]);
+            db.run("DELETE FROM memos WHERE id = ?", [id], function (err) {
+              if (err) {
+                console.error(err);
+                return;
+              }
+              console.log("削除された件数:", this.changes);
+              db.close();
+            });
+          })
+          .catch(console.error);
+      });
+    }
+  });
+}
+main();

@@ -2,15 +2,21 @@
 
 import { parseArgs } from "node:util";
 
-function formatCalendarCell(cell) {
-  if (cell === null) {
-    return "  ";
+function splitIntoWeeks(dates) {
+  const weeks = [];
+  for (let i = 0; i < dates.length; i += 7) {
+    weeks.push(dates.slice(i, i + 7));
   }
-  return cell.getDate().toString().padStart(2, " ");
+  return weeks;
 }
 
-function formatWeek(weekDates) {
-  return weekDates.map(formatCalendarCell).join(" ");
+function formatCalendarWeek(weekDates) {
+  return weekDates
+    .map((cell) => {
+      if (cell === null) return "  ";
+      return cell.getDate().toString().padStart(2, " ");
+    })
+    .join(" ");
 }
 
 const parseArgsConfig = {
@@ -48,14 +54,8 @@ for (
   monthDates.push(new Date(currentDate));
 }
 
-const lines = [];
+const weeks = splitIntoWeeks(monthDates);
 
-for (let i = 0; i < monthDates.length; i += 7) {
-  const weekDates = monthDates.slice(i, i + 7);
-  lines.push(formatWeek(weekDates));
-}
-
-for (let i = 0; i < lines.length; i++) {
-  const line = lines[i];
-  console.log(line);
-}
+weeks.forEach((week) => {
+  console.log(formatCalendarWeek(week));
+});

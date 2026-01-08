@@ -19,7 +19,7 @@ function runBooksFlow(callback) {
               console.log(this.lastID + "：山月記");
               stmt.finalize();
               db.all("SELECT id, title FROM books ORDER BY id", (err, rows) => {
-                db.run("DROP TABLE books", () => {
+                db.run("DROP TABLE IF EXISTS books", () => {
                   callback(null, rows);
                 });
               });
@@ -38,16 +38,23 @@ runBooksFlow((err, rows) => {
   });
 });
 
-// エラーあり：レコードの追加
-function insertError(callback) {
+// エラーあり
+function errorFlow(callback) {
   setTimeout(() => {
     db.run(
-      "CREATE TABLE books2 (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
+      "CREATE TABLE books_error (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
       (err) => {
         if (err) return callback(err);
-        db.run("INSERT INTO books2 (title) VALUES (null)", (err) => {
-          db.run("DROP TABLE books2", () => {
-            callback(err);
+        db.run("INSERT INTO books_error (title) VALUES (null)", (err) => {
+          if (err) {
+            db.run("DROP TABLE IF EXISTS books_error", () => {
+              callback(err);
+            });
+          }
+          db.all("SELECT id, author FROM books_error", (err) => {
+            db.run("DROP TABLE IF EXISTS books_error", () => {
+              callback(err);
+            });
           });
         });
       },
@@ -55,33 +62,8 @@ function insertError(callback) {
   }, 2000);
 }
 
-insertError((err) => {
+errorFlow((err) => {
   if (err) {
-    console.error("INSERTエラー：", err.message);
-  }
-});
-
-// エラーあり：レコードの取得
-function selectError(callback) {
-  setTimeout(() => {
-    db.run(
-      "CREATE TABLE books3 (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
-      (err) => {
-        if (err) return callback(err);
-        db.run("INSERT INTO books3 (title) VALUES ('走れメロス')", () => {
-          db.all("SELECT id, author FROM books3", (err) => {
-            db.run("DROP TABLE books3", () => {
-              callback(err);
-            });
-          });
-        });
-      },
-    );
-  }, 3000);
-}
-
-selectError((err) => {
-  if (err) {
-    console.error("SELECTエラー：", err.message);
+    console.error("エラー：", err.message);
   }
 });

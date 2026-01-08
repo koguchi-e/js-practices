@@ -1,92 +1,51 @@
 #!/usr/bin/env node
 
-import sqlite3 from "sqlite3";
-const db = new sqlite3.Database(":memory:");
+import { runAsync, allAsync } from "./db.js";
 
-function executeSql(sql) {
-  return new Promise((resolve, reject) => {
-    db.run(sql, (err) => {
-      if (err) reject(err);
-      else resolve();
-    });
-  });
-}
-
-function insertBook(title) {
-  return new Promise((resolve, reject) => {
-    db.run("INSERT INTO books (title) VALUES (?)", [title], function (err) {
-      if (err) reject(err);
-      else {
-        console.log(this.lastID + ": " + title);
-        resolve({ id: this.lastID, title });
-      }
-    });
-  });
-}
-
-function selectAll(sql) {
-  return new Promise((resolve, reject) => {
-    db.all(sql, (err, rows) => {
-      if (err) reject(err);
-      else resolve(rows);
-    });
-  });
-}
-
-// エラーなし
-async function insertBooksAndPrint() {
+async function asyncAwait() {
   try {
+    // エラーなし
     console.log("レコードを追加し、自動採番された ID を標準出力に出力する");
-    await executeSql(
+    await runAsync(
       "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
     );
-    await insertBook("走れメロス");
-    await insertBook("こころ");
-    await insertBook("山月記");
+    const firstBook = await runAsync(
+      "INSERT INTO books (title) VALUES ('走れメロス')",
+    );
+    console.log(firstBook.lastID + "：走れメロス");
+    const secondBook = await runAsync(
+      "INSERT INTO books (title) VALUES ('こころ')",
+    );
+    console.log(secondBook.lastID + "：こころ");
+    const thirdBook = await runAsync(
+      "INSERT INTO books (title) VALUES ('山月記')",
+    );
+    console.log(thirdBook.lastID + "：山月記");
     console.log("レコードを取得し、それを標準出力に出力する");
-    const rows = await selectAll("SELECT id, title FROM books ORDER BY id");
+    const rows = await allAsync("SELECT id, title FROM books ORDER BY id");
     rows.forEach((row) => {
       console.log(row.id + ": " + row.title);
     });
+    await runAsync("DROP TABLE IF EXISTS books");
   } catch (err) {
     console.error("エラー：", err.message);
-  } finally {
-    await executeSql("DROP TABLE books");
   }
-}
-
-// エラーあり：レコードの追加
-async function insertError() {
+  // エラーあり
   try {
-    await executeSql(
-      "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
+    await runAsync(
+      "CREATE TABLE books_error (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
     );
-    await executeSql("INSERT INTO books (title) VALUES (null)");
+    await runAsync("INSERT INTO books_error (title) VALUES (null)");
+    await allAsync("SELECT id, title FROM books_error ORDER BY id");
   } catch (err) {
     console.error("INSERTエラー：", err.message);
-  } finally {
-    await executeSql("DROP TABLE books");
   }
-}
-
-// エラーあり：レコードの取得
-async function selectError() {
   try {
-    await executeSql(
-      "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
-    );
-    await executeSql("INSERT INTO books (title) VALUES ('走れメロス')");
-    await selectAll("SELECT id, author FROM books");
+    await allAsync("SELECT id, author FROM books_error");
+    await runAsync("DROP TABLE IF EXISTS books_error");
   } catch (err) {
     console.error("SELECTエラー：", err.message);
-  } finally {
-    await executeSql("DROP TABLE books");
   }
 }
 
-async function main() {
-  await insertBooksAndPrint();
-  await insertError();
-  await selectError();
-}
-main();
+asyncAwait();

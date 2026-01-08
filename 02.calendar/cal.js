@@ -44,10 +44,9 @@ for (let i = 0; i < monthDates.length; i += 7) {
 
 const lines = weeks.map((weekDates) => {
   return weekDates
-    .map((cell) => {
-      if (cell === null) return "  ";
-      return cell.getDate().toString().padStart(2, " ");
-    })
+    .map((cell) =>
+      cell === null ? "  " : cell.getDate().toString().padStart(2, " "),
+    )
     .join(" ");
 });
 

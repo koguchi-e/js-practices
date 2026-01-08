@@ -9,11 +9,9 @@ function runBooksFlow(callback) {
     db.run(
       "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
       () => {
+        console.log("レコードを追加し、自動採番された ID を標準出力に出力する");
         const stmt = db.prepare("INSERT INTO books (title) VALUES (?)");
         stmt.run(["走れメロス"], function () {
-          console.log(
-            "レコードを追加し、自動採番された ID を標準出力に出力する",
-          );
           console.log(this.lastID + "：走れメロス");
           stmt.run(["こころ"], function () {
             console.log(this.lastID + "：こころ");
@@ -63,7 +61,7 @@ insertError((err) => {
   }
 });
 
-// エラーあり：レコードの追加
+// エラーあり：レコードの取得
 function selectError(callback) {
   setTimeout(() => {
     db.run(

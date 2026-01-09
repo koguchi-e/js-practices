@@ -31,21 +31,20 @@ async function asyncAwait() {
     console.error("エラー：", err.message);
   }
   // エラーあり
+  await runAsync(
+    "CREATE TABLE books_error (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
+  );
   try {
-    await runAsync(
-      "CREATE TABLE books_error (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
-    );
     await runAsync("INSERT INTO books_error (title) VALUES (null)");
-    await allAsync("SELECT id, title FROM books_error ORDER BY id");
   } catch (err) {
     console.error("INSERTエラー：", err.message);
   }
   try {
     await allAsync("SELECT id, author FROM books_error");
-    await runAsync("DROP TABLE IF EXISTS books_error");
   } catch (err) {
     console.error("SELECTエラー：", err.message);
   }
+  await runAsync("DROP TABLE IF EXISTS books_error");
 }
 
 asyncAwait();

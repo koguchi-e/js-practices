@@ -39,7 +39,6 @@ runAsync(
     ),
   )
   .then(() => runAsync("INSERT INTO books_error (title) VALUES (null)"))
-  .then(() => allAsync("SELECT id, title FROM books_error ORDER BY id"))
   .catch((err) => {
     console.error("INSERTエラー：", err.message);
   })

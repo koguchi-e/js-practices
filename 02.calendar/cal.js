@@ -42,13 +42,13 @@ for (let i = 0; i < monthDates.length; i += 7) {
   weeks.push(monthDates.slice(i, i + 7));
 }
 
-const lines = weeks.map((weekDates) => {
-  return weekDates
+const lines = weeks.map((weekDates) =>
+  weekDates
     .map((cell) =>
       cell === null ? "  " : cell.getDate().toString().padStart(2, " "),
     )
-    .join(" ");
-});
+    .join(" "),
+);
 
 lines.forEach((line) => {
   console.log(line);

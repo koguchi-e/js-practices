@@ -1,14 +1,13 @@
 import { parseArgs } from "node:util";
 
 export class Command {
-  constructor(argv) {
+  constructor() {
     const { values } = parseArgs({
       options: {
         l: { type: "boolean" },
         d: { type: "boolean" },
         r: { type: "boolean" },
       },
-      argv: argv.slice(2),
     });
     this.values = values;
   }

@@ -9,18 +9,18 @@ async function asyncAwait() {
     await runAsync(
       "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
     );
-    const firstBook = await runAsync(
+    const firstInsertResult = await runAsync(
       "INSERT INTO books (title) VALUES ('走れメロス')",
     );
-    console.log(`${firstBook.lastID}：走れメロス`);
-    const secondBook = await runAsync(
+    console.log(`${firstInsertResult.lastID}：走れメロス`);
+    const secondInsertResult = await runAsync(
       "INSERT INTO books (title) VALUES ('こころ')",
     );
-    console.log(`${secondBook.lastID}：こころ`);
-    const thirdBook = await runAsync(
+    console.log(`${secondInsertResult.lastID}：こころ`);
+    const thirdInsertResult = await runAsync(
       "INSERT INTO books (title) VALUES ('山月記')",
     );
-    console.log(`${thirdBook.lastID}：山月記`);
+    console.log(`${thirdInsertResult.lastID}：山月記`);
     console.log("レコードを取得し、それを標準出力に出力する");
     const rows = await allAsync("SELECT id, title FROM books ORDER BY id");
     rows.forEach((row) => {

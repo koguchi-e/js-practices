@@ -22,29 +22,27 @@ db.run(
             rows.forEach((row) => {
               console.log(row.id + ": " + row.title);
             });
-            db.run("DROP TABLE IF EXISTS books", () => {});
-            // エラーあり
-            db.run(
-              "CREATE TABLE books_error (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
-              (err) => {
-                if (err) return console.error(err);
-                db.run(
-                  "INSERT INTO books_error (title) VALUES (null)",
-                  (err) => {
+            db.run("DROP TABLE books", () => {
+              // エラーあり
+              db.run(
+                "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
+                (err) => {
+                  if (err) return console.error(err);
+                  db.run("INSERT INTO books (title) VALUES (null)", (err) => {
                     if (err) {
-                      db.run("DROP TABLE IF EXISTS books_error", () => {
+                      db.run("DROP TABLE books", () => {
                         console.error("INSERTエラー：", err.message);
                       });
                     }
-                    db.all("SELECT id, author FROM books_error", (err) => {
-                      db.run("DROP TABLE IF EXISTS books_error", () => {
+                    db.all("SELECT id, author FROM books", (err) => {
+                      db.run("DROP TABLE books", () => {
                         console.error("SELECTエラー：", err.message);
                       });
                     });
-                  },
-                );
-              },
-            );
+                  });
+                },
+              );
+            });
           });
         });
       });

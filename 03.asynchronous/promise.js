@@ -31,19 +31,19 @@ runAsync(
   .catch((err) => {
     console.error(err);
   })
-  .then(() => runAsync("DROP TABLE IF EXISTS books"))
+  .then(() => runAsync("DROP TABLE books"))
   // エラーありのプログラム
   .then(() =>
     runAsync(
-      "CREATE TABLE books_error (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
+      "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
     ),
   )
-  .then(() => runAsync("INSERT INTO books_error (title) VALUES (null)"))
+  .then(() => runAsync("INSERT INTO books (title) VALUES (null)"))
   .catch((err) => {
     console.error("INSERTエラー：", err.message);
   })
-  .then(() => allAsync("SELECT id, author FROM books_error"))
+  .then(() => allAsync("SELECT id, author FROM books"))
   .catch((err) => {
     console.error("SELECTエラー：", err.message);
   })
-  .then(() => runAsync("DROP TABLE IF EXISTS books_error"));
+  .then(() => runAsync("DROP TABLE books"));

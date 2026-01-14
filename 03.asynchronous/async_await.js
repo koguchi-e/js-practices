@@ -26,25 +26,25 @@ async function asyncAwait() {
     rows.forEach((row) => {
       console.log(row.id + ": " + row.title);
     });
-    await runAsync("DROP TABLE IF EXISTS books");
+    await runAsync("DROP TABLE books");
   } catch (err) {
     console.error("エラー：", err.message);
   }
   // エラーあり
   await runAsync(
-    "CREATE TABLE books_error (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
+    "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
   );
   try {
-    await runAsync("INSERT INTO books_error (title) VALUES (null)");
+    await runAsync("INSERT INTO books (title) VALUES (null)");
   } catch (err) {
     console.error("INSERTエラー：", err.message);
   }
   try {
-    await allAsync("SELECT id, author FROM books_error");
+    await allAsync("SELECT id, author FROM books");
   } catch (err) {
     console.error("SELECTエラー：", err.message);
   }
-  await runAsync("DROP TABLE IF EXISTS books_error");
+  await runAsync("DROP TABLE books");
 }
 
 asyncAwait();

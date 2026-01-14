@@ -17,7 +17,7 @@ db.run(
         stmt.run(["山月記"], function () {
           console.log(`${this.lastID}：山月記`);
           stmt.finalize();
-          db.all("SELECT id, title FROM books ORDER BY id", (err, rows) => {
+          db.all("SELECT id, title FROM books ORDER BY id", (_err, rows) => {
             db.run("DROP TABLE IF EXISTS books", () => {
               console.log("レコードを取得し、それを標準出力に出力する");
               rows.forEach((row) => {

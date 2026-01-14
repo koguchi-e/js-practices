@@ -17,13 +17,12 @@ db.run(
         stmt.run(["山月記"], function () {
           console.log(`${this.lastID}：山月記`);
           stmt.finalize();
+          console.log("レコードを取得し、それを標準出力に出力する");
           db.all("SELECT id, title FROM books ORDER BY id", (_err, rows) => {
-            db.run("DROP TABLE IF EXISTS books", () => {
-              console.log("レコードを取得し、それを標準出力に出力する");
-              rows.forEach((row) => {
-                console.log(row.id + ": " + row.title);
-              });
+            rows.forEach((row) => {
+              console.log(row.id + ": " + row.title);
             });
+            db.run("DROP TABLE IF EXISTS books", () => {});
             // エラーあり
             db.run(
               "CREATE TABLE books_error (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",

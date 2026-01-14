@@ -26,8 +26,7 @@ db.run(
               // エラーあり
               db.run(
                 "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
-                (err) => {
-                  if (err) return console.error(err);
+                () => {
                   db.run("INSERT INTO books (title) VALUES (null)", (err) => {
                     if (err) {
                       db.run("DROP TABLE books", () => {

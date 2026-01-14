@@ -2,10 +2,10 @@
 
 import { runAsync, allAsync } from "./db.js";
 
+// エラーなし
 runAsync(
   "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
 )
-  // エラーなし
   .then(() =>
     console.log("レコードを追加し、自動採番された ID を標準出力に出力する"),
   )

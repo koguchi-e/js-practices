@@ -40,10 +40,18 @@ runAsync(
   )
   .then(() => runAsync("INSERT INTO books (title) VALUES (null)"))
   .catch((insertErr) => {
-    console.error("INSERTエラー：", insertErr.message);
+    if (insertErr.code === "SQLITE_CONSTRAINT") {
+      console.error("INSERTエラー：", insertErr.message);
+    } else {
+      throw insertErr;
+    }
   })
   .then(() => allAsync("SELECT id, author FROM books"))
   .catch((selectErr) => {
-    console.error("SELECTエラー：", selectErr.message);
+    if (selectErr.code === "SQLITE_ERROR") {
+      console.error("SELECTエラー：", selectErr.message);
+    } else {
+      throw selectErr;
+    }
   })
   .then(() => runAsync("DROP TABLE books"));

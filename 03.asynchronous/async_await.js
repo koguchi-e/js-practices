@@ -36,11 +36,19 @@ await runAsync(
 try {
   await runAsync("INSERT INTO books_error (title) VALUES (null)");
 } catch (insertErr) {
-  console.error("INSERTエラー：", insertErr.message);
+  if (insertErr.code === "SQLITE_CONSTRAINT") {
+    console.error("INSERTエラー：", insertErr.message);
+  } else {
+    throw insertErr;
+  }
 }
 try {
   await allAsync("SELECT id, author FROM books");
 } catch (selectErr) {
-  console.error("SELECTエラー：", selectErr.message);
+  if (selectErr.code === "SQLITE_ERROR") {
+    console.error("SELECTエラー：", selectErr.message);
+  } else {
+    throw selectErr;
+  }
 }
 await runAsync("DROP TABLE books_error");

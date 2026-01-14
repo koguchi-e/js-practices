@@ -30,9 +30,13 @@ db.run(
                   db.run(
                     "INSERT INTO books (title) VALUES (null)",
                     (insertErr) => {
-                      console.error("INSERTエラー：", insertErr.message);
+                      if (insertErr) {
+                        console.error("INSERTエラー：", insertErr.message);
+                      }
                       db.all("SELECT id, author FROM books", (selectErr) => {
-                        console.error("SELECTエラー：", selectErr.message);
+                        if (selectErr) {
+                          console.error("SELECTエラー：", selectErr.message);
+                        }
                         db.run("DROP TABLE books", () => {});
                       });
                     },

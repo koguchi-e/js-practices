@@ -27,18 +27,16 @@ db.run(
               db.run(
                 "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
                 () => {
-                  db.run("INSERT INTO books (title) VALUES (null)", (err) => {
-                    if (err) {
-                      db.run("DROP TABLE books", () => {
-                        console.error("INSERTエラー：", err.message);
+                  db.run(
+                    "INSERT INTO books (title) VALUES (null)",
+                    (insertErr) => {
+                      console.error("INSERTエラー：", insertErr.message);
+                      db.all("SELECT id, author FROM books", (selectErr) => {
+                        console.error("SELECTエラー：", selectErr.message);
+                        db.run("DROP TABLE books", () => {});
                       });
-                    }
-                    db.all("SELECT id, author FROM books", (err) => {
-                      db.run("DROP TABLE books", () => {
-                        console.error("SELECTエラー：", err.message);
-                      });
-                    });
-                  });
+                    },
+                  );
                 },
               );
             });

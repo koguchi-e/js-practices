@@ -39,11 +39,11 @@ runAsync(
     ),
   )
   .then(() => runAsync("INSERT INTO books (title) VALUES (null)"))
-  .catch((err) => {
-    console.error("INSERTエラー：", err.message);
+  .catch((insertErr) => {
+    console.error("INSERTエラー：", insertErr.message);
   })
   .then(() => allAsync("SELECT id, author FROM books"))
-  .catch((err) => {
-    console.error("SELECTエラー：", err.message);
+  .catch((selectErr) => {
+    console.error("SELECTエラー：", selectErr.message);
   })
   .then(() => runAsync("DROP TABLE books"));

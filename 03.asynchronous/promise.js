@@ -11,15 +11,15 @@ runAsync(
   )
   .then(() => runAsync("INSERT INTO books (title) VALUES ('走れメロス')"))
   .then((stmt) => {
-    console.log(stmt.lastID + "：走れメロス");
+    console.log(`${stmt.lastID}：走れメロス`);
   })
   .then(() => runAsync("INSERT INTO books (title) VALUES ('こころ')"))
   .then((stmt) => {
-    console.log(stmt.lastID + "：こころ");
+    console.log(`${stmt.lastID}：こころ`);
   })
   .then(() => runAsync("INSERT INTO books (title) VALUES ('山月記')"))
   .then((stmt) => {
-    console.log(stmt.lastID + "：山月記");
+    console.log(`${stmt.lastID}：山月記`);
   })
   .then(() => console.log("レコードを取得し、それを標準出力に出力する"))
   .then(() => allAsync("SELECT id, title FROM books ORDER BY id"))

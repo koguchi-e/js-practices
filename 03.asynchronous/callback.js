@@ -11,11 +11,11 @@ db.run(
     console.log("レコードを追加し、自動採番された ID を標準出力に出力する");
     const stmt = db.prepare("INSERT INTO books (title) VALUES (?)");
     stmt.run(["走れメロス"], function () {
-      console.log(this.lastID + "：走れメロス");
+      console.log(`${this.lastID}：走れメロス`);
       stmt.run(["こころ"], function () {
-        console.log(this.lastID + "：こころ");
+        console.log(`${this.lastID}：こころ`);
         stmt.run(["山月記"], function () {
-          console.log(this.lastID + "：山月記");
+          console.log(`${this.lastID}：山月記`);
           stmt.finalize();
           db.all("SELECT id, title FROM books ORDER BY id", (err, rows) => {
             db.run("DROP TABLE IF EXISTS books", () => {

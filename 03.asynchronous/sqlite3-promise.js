@@ -1,3 +1,5 @@
+export { runAsync, allAsync };
+
 function runAsync(db, sql, params = []) {
   return new Promise((resolve, reject) => {
     db.run(sql, params, function (err) {
@@ -15,5 +17,3 @@ function allAsync(db, sql, params = []) {
     });
   });
 }
-
-export { runAsync, allAsync };

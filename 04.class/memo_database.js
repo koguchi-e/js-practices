@@ -26,8 +26,12 @@ export class MemoDatabase {
     this.db.get("SELECT body FROM memos WHERE id = ?", [id], callback);
   }
 
-  deleteById(id, callback) {
+  deleteMemoById(id, callback) {
     this.db.run("DELETE FROM memos WHERE id = ?", [id], callback);
+  }
+
+  updateMemoById(id, body, callback) {
+    this.db.run("UPDATE memos SET body = ? WHERE id = ?", [body, id], callback);
   }
 
   close() {

@@ -7,13 +7,14 @@ export class Command {
         l: { type: "boolean" },
         d: { type: "boolean" },
         r: { type: "boolean" },
+        e: { type: "boolean" },
       },
     });
     this.values = values;
   }
 
   isAdd() {
-    return !this.values.l && !this.values.d && !this.values.r;
+    return !this.values.l && !this.values.d && !this.values.r && !this.values.e;
   }
 
   isList() {
@@ -26,5 +27,9 @@ export class Command {
 
   isRead() {
     return this.values.r;
+  }
+
+  isEdit() {
+    return this.values.e;
   }
 }

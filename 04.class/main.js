@@ -1,0 +1,193 @@
+#!/usr/bin/env node
+
+import readline from "node:readline";
+import enquirer from "enquirer";
+import "dotenv/config";
+import fs from "fs";
+
+import { Command } from "./command.js";
+import { MemoDatabase } from "./memo_database.js";
+import { spawnSync } from "node:child_process";
+
+const { Select } = enquirer;
+const editor = process.env.EDITOR;
+
+class Main {
+  constructor() {
+    this.command = new Command(process.argv);
+    this.db = new MemoDatabase();
+  }
+
+  run() {
+    this.db.init(() => {
+      if (this.command.isAdd()) {
+        this.addMemo();
+      } else if (this.command.isList()) {
+        this.listMemo();
+      } else if (this.command.isDelete()) {
+        this.deleteMemo();
+      } else if (this.command.isRead()) {
+        this.readMemo();
+      } else if (this.command.isEdit()) {
+        this.editMemo();
+      }
+    });
+  }
+
+  addMemo() {
+    let inputString = "";
+
+    const reader = readline.createInterface({
+      input: process.stdin,
+    });
+
+    reader.on("line", (line) => {
+      inputString += line + "\n";
+    });
+
+    reader.on("close", () => {
+      this.db.insert(inputString, () => {
+        console.log("以下メモが登録されました----");
+        console.log(inputString);
+        this.db.close();
+      });
+    });
+  }
+
+  listMemo() {
+    console.log("メモ一覧----");
+    this.db.findAll((err, rows) => {
+      if (err) {
+        console.error(err);
+        return;
+      } else {
+        rows.forEach((row) => {
+          console.log(`[${row.id}] ${row.body.split("\n")[0]}`);
+        });
+      }
+      this.db.close();
+    });
+  }
+
+  deleteMemo() {
+    this.db.findAll((err, rows) => {
+      if (err) {
+        console.error(err);
+        return;
+      } else {
+        const choices = rows.map((row) => ({
+          name: `[${row.id}] ${row.body.split("\n")[0]}`,
+        }));
+
+        const prompt = new Select({
+          name: "memo",
+          message: "削除するメモを選択してください。",
+          choices,
+        });
+
+        prompt.run().then((selected) => {
+          console.log("選択結果：", selected);
+          const id = Number(selected.match(/^\[(\d+)\]/)[1]);
+          this.db.deleteMemoById(id, (err) => {
+            if (err) {
+              console.error(err);
+              return;
+            }
+            this.db.close();
+          });
+        });
+      }
+    });
+  }
+
+  readMemo() {
+    this.db.findAll((err, rows) => {
+      if (err) {
+        console.error(err);
+        return;
+      } else {
+        const choices = rows.map(
+          (row) => `[${row.id}] ${row.body.split("\n")[0]}`,
+        );
+
+        const prompt = new Select({
+          name: "memo",
+          message: "参照するメモを選択してください。",
+          choices,
+        });
+
+        prompt.run().then((selected) => {
+          console.log("選択結果：", selected);
+          const id = Number(selected.match(/^\[(\d+)\]/)[1]);
+          this.db.findMemoById(id, (err, row) => {
+            if (err) {
+              console.error(err);
+              return;
+            } else {
+              console.log("メモ本文----");
+              console.log(row.body);
+            }
+            this.db.close();
+          });
+        });
+      }
+    });
+  }
+
+  editMemo() {
+    this.db.findAll((err, rows) => {
+      if (err) {
+        console.error(err);
+        return;
+      } else {
+        const choices = rows.map(
+          (row) => `[${row.id}] ${row.body.split("\n")[0]}`,
+        );
+
+        const prompt = new Select({
+          name: "memo",
+          message: "編集するメモを選択してください。",
+          choices,
+        });
+
+        prompt.run().then((selected) => {
+          console.log("選択結果：", selected);
+          const id = Number(selected.match(/^\[(\d+)\]/)[1]);
+          this.db.findMemoById(id, (err, row) => {
+            fs.writeFile("./memo.txt", row.body, "utf8", (err) => {
+              if (err) {
+                console.log(err);
+              } else {
+                spawnSync(editor, ["-w", "./memo.txt"], {
+                  stdio: "inherit",
+                });
+                const editBody = fs.readFileSync("./memo.txt", "utf8");
+                this.db.updateMemoById(id, editBody, (err) => {
+                  if (err) {
+                    console.error(err);
+                    return;
+                  } else {
+                    this.db.findMemoById(id, (err, row) => {
+                      if (err) {
+                        console.error(err);
+                        return;
+                      } else {
+                        console.log("編集結果----");
+                        console.log(row.body);
+
+                        fs.unlinkSync("./memo.txt");
+                        this.db.close();
+                      }
+                    });
+                  }
+                });
+              }
+            });
+          });
+        });
+      }
+    });
+  }
+}
+
+new Main().run();

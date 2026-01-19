@@ -123,36 +123,41 @@ class Main {
 
   editMemo() {
     this.selectMemo("編集するメモを選択してください。", (id) => {
-      this.db.findMemoById(id, (err, row) => {
-        fs.writeFile("./memo.txt", row.body, "utf8", (err) => {
-          if (err) {
-            console.log(err);
-          } else {
-            spawnSync(editor, ["-w", "./memo.txt"], {
-              stdio: "inherit",
-            });
-            const editBody = fs.readFileSync("./memo.txt", "utf8");
-            this.db.updateMemoById(id, editBody, (err) => {
-              if (err) {
-                console.error(err);
-                return;
-              } else {
-                this.db.findMemoById(id, (err, row) => {
-                  if (err) {
-                    console.error(err);
-                    return;
-                  } else {
-                    console.log("編集結果----");
-                    console.log(row.body);
-                    fs.unlinkSync("./memo.txt");
-                    this.db.close();
-                  }
-                });
-              }
-            });
-          }
+      if (!editor) {
+        console.error("EDITOR 環境変数が設定されていません。");
+        process.exit(1);
+      } else {
+        this.db.findMemoById(id, (err, row) => {
+          fs.writeFile("./memo.txt", row.body, "utf8", (err) => {
+            if (err) {
+              console.log(err);
+            } else {
+              spawnSync(editor, ["-w", "./memo.txt"], {
+                stdio: "inherit",
+              });
+              const editBody = fs.readFileSync("./memo.txt", "utf8");
+              this.db.updateMemoById(id, editBody, (err) => {
+                if (err) {
+                  console.error(err);
+                  return;
+                } else {
+                  this.db.findMemoById(id, (err, row) => {
+                    if (err) {
+                      console.error(err);
+                      return;
+                    } else {
+                      console.log("編集結果----");
+                      console.log(row.body);
+                      fs.unlinkSync("./memo.txt");
+                      this.db.close();
+                    }
+                  });
+                }
+              });
+            }
+          });
         });
-      });
+      }
     });
   }
 }

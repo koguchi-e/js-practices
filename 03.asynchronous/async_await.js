@@ -39,10 +39,10 @@ try {
 // エラーあり
 await runAsync(
   db,
-  "CREATE TABLE books_error (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
+  "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
 );
 try {
-  await runAsync(db, "INSERT INTO books_error (title) VALUES (null)");
+  await runAsync(db, "INSERT INTO books (title) VALUES (null)");
 } catch (insertErr) {
   if (insertErr.code === "SQLITE_CONSTRAINT") {
     console.error("INSERTエラー：", insertErr.message);
@@ -59,4 +59,4 @@ try {
     throw selectErr;
   }
 }
-await runAsync(db, "DROP TABLE books_error");
+await runAsync(db, "DROP TABLE books");

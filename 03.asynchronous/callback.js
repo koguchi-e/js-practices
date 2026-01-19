@@ -20,7 +20,7 @@ db.run(
           console.log("レコードを取得し、それを標準出力に出力する");
           db.all("SELECT id, title FROM books ORDER BY id", (_err, rows) => {
             rows.forEach((row) => {
-              console.log(row.id + ": " + row.title);
+              console.log(`${row.id}: ${row.title}`);
             });
             db.run("DROP TABLE books", () => {
               // エラーあり
@@ -31,11 +31,11 @@ db.run(
                     "INSERT INTO books (title) VALUES (null)",
                     (insertErr) => {
                       if (insertErr) {
-                        console.error("INSERTエラー：", insertErr.message);
+                        console.error(`INSERTエラー：${insertErr.message}`);
                       }
                       db.all("SELECT id, author FROM books", (selectErr) => {
                         if (selectErr) {
-                          console.error("SELECTエラー：", selectErr.message);
+                          console.error(`SELECTエラー：${selectErr.message}`);
                         }
                         db.run("DROP TABLE books", () => {});
                       });

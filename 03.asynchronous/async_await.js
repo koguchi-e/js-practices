@@ -30,11 +30,11 @@ try {
   console.log("レコードを取得し、それを標準出力に出力する");
   const rows = await allAsync(db, "SELECT id, title FROM books ORDER BY id");
   rows.forEach((row) => {
-    console.log(row.id + ": " + row.title);
+    console.log(`${row.id}: ${row.title}`);
   });
   await runAsync(db, "DROP TABLE books");
 } catch (err) {
-  console.error("エラー：", err.message);
+  console.error(`エラー： ${err.message}`);
 }
 // エラーあり
 await runAsync(
@@ -45,7 +45,7 @@ try {
   await runAsync(db, "INSERT INTO books (title) VALUES (null)");
 } catch (insertErr) {
   if (insertErr.code === "SQLITE_CONSTRAINT") {
-    console.error("INSERTエラー：", insertErr.message);
+    console.error(`INSERTエラー：${insertErr.message}`);
   } else {
     throw insertErr;
   }
@@ -54,7 +54,7 @@ try {
   await allAsync(db, "SELECT id, author FROM books");
 } catch (selectErr) {
   if (selectErr.code === "SQLITE_ERROR") {
-    console.error("SELECTエラー：", selectErr.message);
+    console.error(`SELECTエラー：${selectErr.message}`);
   } else {
     throw selectErr;
   }

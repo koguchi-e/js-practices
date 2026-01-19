@@ -69,7 +69,7 @@ class Main {
     });
   }
 
-  deleteMemo() {
+  selectMemo(message, callback) {
     this.db.findAll((err, rows) => {
       if (err) {
         console.error(err);
@@ -81,111 +81,78 @@ class Main {
 
         const prompt = new Select({
           name: "memo",
-          message: "削除するメモを選択してください。",
+          message,
           choices,
         });
 
         prompt.run().then((selected) => {
           console.log("選択結果：", selected);
           const id = Number(selected.match(/^\[(\d+)\]/)[1]);
-          this.db.deleteMemoById(id, (err) => {
-            if (err) {
-              console.error(err);
-              return;
-            }
-            this.db.close();
-          });
+          callback(id);
         });
       }
+    });
+  }
+
+  deleteMemo() {
+    this.selectMemo("削除するメモを選択してください。", (id) => {
+      this.db.deleteMemoById(id, (err) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        this.db.close();
+      });
     });
   }
 
   readMemo() {
-    this.db.findAll((err, rows) => {
-      if (err) {
-        console.error(err);
-        return;
-      } else {
-        const choices = rows.map(
-          (row) => `[${row.id}] ${row.body.split("\n")[0]}`,
-        );
-
-        const prompt = new Select({
-          name: "memo",
-          message: "参照するメモを選択してください。",
-          choices,
-        });
-
-        prompt.run().then((selected) => {
-          console.log("選択結果：", selected);
-          const id = Number(selected.match(/^\[(\d+)\]/)[1]);
-          this.db.findMemoById(id, (err, row) => {
-            if (err) {
-              console.error(err);
-              return;
-            } else {
-              console.log("メモ本文----");
-              console.log(row.body);
-            }
-            this.db.close();
-          });
-        });
-      }
+    this.selectMemo("参照するメモを選択してください。", (id) => {
+      this.db.findMemoById(id, (err, row) => {
+        if (err) {
+          console.error(err);
+          return;
+        } else {
+          console.log("メモ本文----");
+          console.log(row.body);
+        }
+        this.db.close();
+      });
     });
   }
 
   editMemo() {
-    this.db.findAll((err, rows) => {
-      if (err) {
-        console.error(err);
-        return;
-      } else {
-        const choices = rows.map(
-          (row) => `[${row.id}] ${row.body.split("\n")[0]}`,
-        );
-
-        const prompt = new Select({
-          name: "memo",
-          message: "編集するメモを選択してください。",
-          choices,
-        });
-
-        prompt.run().then((selected) => {
-          console.log("選択結果：", selected);
-          const id = Number(selected.match(/^\[(\d+)\]/)[1]);
-          this.db.findMemoById(id, (err, row) => {
-            fs.writeFile("./memo.txt", row.body, "utf8", (err) => {
+    this.selectMemo("編集するメモを選択してください。", (id) => {
+      this.db.findMemoById(id, (err, row) => {
+        fs.writeFile("./memo.txt", row.body, "utf8", (err) => {
+          if (err) {
+            console.log(err);
+          } else {
+            spawnSync(editor, ["-w", "./memo.txt"], {
+              stdio: "inherit",
+            });
+            const editBody = fs.readFileSync("./memo.txt", "utf8");
+            this.db.updateMemoById(id, editBody, (err) => {
               if (err) {
-                console.log(err);
+                console.error(err);
+                return;
               } else {
-                spawnSync(editor, ["-w", "./memo.txt"], {
-                  stdio: "inherit",
-                });
-                const editBody = fs.readFileSync("./memo.txt", "utf8");
-                this.db.updateMemoById(id, editBody, (err) => {
+                this.db.findMemoById(id, (err, row) => {
                   if (err) {
                     console.error(err);
                     return;
                   } else {
-                    this.db.findMemoById(id, (err, row) => {
-                      if (err) {
-                        console.error(err);
-                        return;
-                      } else {
-                        console.log("編集結果----");
-                        console.log(row.body);
-
-                        fs.unlinkSync("./memo.txt");
-                        this.db.close();
-                      }
-                    });
+                    console.log("編集結果----");
+                    console.log(row.body);
+                    fs.unlinkSync("./memo.txt");
+                    this.db.close();
                   }
                 });
               }
             });
-          });
+          }
         });
-      }
+      });
     });
   }
 }

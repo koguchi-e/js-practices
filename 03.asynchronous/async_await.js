@@ -58,5 +58,7 @@ try {
   } else {
     throw selectErr;
   }
+} finally {
+  await runAsync(db, "DROP TABLE books");
+  db.close();
 }
-await runAsync(db, "DROP TABLE books");

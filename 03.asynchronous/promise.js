@@ -65,6 +65,8 @@ runAsync(
       throw selectErr;
     }
   })
-  .then(() => {
-    return runAsync(db, "DROP TABLE books");
+  .finally(() => {
+    return runAsync(db, "DROP TABLE books").finally(() => {
+      db.close();
+    });
   });

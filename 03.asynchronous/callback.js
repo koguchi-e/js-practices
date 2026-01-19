@@ -43,7 +43,9 @@ db.run(
                             throw selectErr;
                           }
                         }
-                        db.run("DROP TABLE books", () => {});
+                        db.run("DROP TABLE books", () => {
+                          db.close();
+                        });
                       });
                     },
                   );

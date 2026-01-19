@@ -35,7 +35,9 @@ runAsync(
   .catch((err) => {
     console.error(err);
   })
-  .then(() => runAsync(db, "DROP TABLE books"))
+  .then(() => {
+    return runAsync(db, "DROP TABLE books");
+  })
   // エラーありのプログラム
   .then(() =>
     runAsync(
@@ -43,7 +45,9 @@ runAsync(
       "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
     ),
   )
-  .then(() => runAsync(db, "INSERT INTO books (title) VALUES (null)"))
+  .then(() => {
+    return runAsync(db, "INSERT INTO books (title) VALUES (null)");
+  })
   .catch((insertErr) => {
     if (insertErr.code === "SQLITE_CONSTRAINT") {
       console.error(`INSERTエラー：${insertErr.message}`);
@@ -51,7 +55,9 @@ runAsync(
       throw insertErr;
     }
   })
-  .then(() => allAsync(db, "SELECT id, author FROM books"))
+  .then(() => {
+    return allAsync(db, "SELECT id, author FROM books");
+  })
   .catch((selectErr) => {
     if (selectErr.code === "SQLITE_ERROR") {
       console.error(`SELECTエラー：${selectErr.message}`);
@@ -59,4 +65,6 @@ runAsync(
       throw selectErr;
     }
   })
-  .then(() => runAsync(db, "DROP TABLE books"));
+  .then(() => {
+    return runAsync(db, "DROP TABLE books");
+  });

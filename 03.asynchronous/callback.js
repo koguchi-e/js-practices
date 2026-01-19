@@ -9,14 +9,12 @@ db.run(
   "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
   () => {
     console.log("レコードを追加し、自動採番された ID を標準出力に出力する");
-    const stmt = db.prepare("INSERT INTO books (title) VALUES (?)");
-    stmt.run(["走れメロス"], function () {
+    db.run("INSERT INTO books (title) VALUES ('走れメロス')", function () {
       console.log(`${this.lastID}：走れメロス`);
-      stmt.run(["こころ"], function () {
+      db.run("INSERT INTO books (title) VALUES ('こころ')", function () {
         console.log(`${this.lastID}：こころ`);
-        stmt.run(["山月記"], function () {
+        db.run("INSERT INTO books (title) VALUES ('山月記')", function () {
           console.log(`${this.lastID}：山月記`);
-          stmt.finalize();
           console.log("レコードを取得し、それを標準出力に出力する");
           db.all("SELECT id, title FROM books ORDER BY id", (_err, rows) => {
             rows.forEach((row) => {

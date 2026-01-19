@@ -14,8 +14,10 @@ export class MemoDatabase {
 
   insert(body, callback) {
     const stmt = this.db.prepare("INSERT INTO memos (body) VALUES (?)");
-    stmt.run(body, callback);
-    stmt.finalize();
+    stmt.run(body, (err) => {
+      stmt.finalize();
+      callback(err);
+    });
   }
 
   findAll(callback) {

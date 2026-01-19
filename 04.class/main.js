@@ -35,20 +35,20 @@ class Main {
   }
 
   addMemo() {
-    let inputString = "";
+    let memoBody = "";
 
     const reader = readline.createInterface({
       input: process.stdin,
     });
 
     reader.on("line", (line) => {
-      inputString += line + "\n";
+      memoBody += line + "\n";
     });
 
     reader.on("close", () => {
-      this.db.insert(inputString, () => {
+      this.db.insert(memoBody, () => {
         console.log("以下メモが登録されました----");
-        console.log(inputString);
+        console.log(memoBody);
         this.db.close();
       });
     });
@@ -75,9 +75,9 @@ class Main {
         console.error(err);
         return;
       } else {
-        const choices = rows.map((row) => ({
-          name: `[${row.id}] ${row.body.split("\n")[0]}`,
-        }));
+        const choices = rows.map(
+          (row) => `[${row.id}] ${row.body.split("\n")[0]}`,
+        );
 
         const prompt = new Select({
           name: "memo",

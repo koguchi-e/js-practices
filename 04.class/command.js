@@ -10,26 +10,28 @@ export class Command {
         e: { type: "boolean" },
       },
     });
-    this.values = values;
+    this.options = values;
   }
 
   isAdd() {
-    return !this.values.l && !this.values.d && !this.values.r && !this.values.e;
+    return (
+      !this.options.l && !this.options.d && !this.options.r && !this.options.e
+    );
   }
 
   isList() {
-    return this.values.l;
+    return this.options.l;
   }
 
   isDelete() {
-    return this.values.d;
+    return this.options.d;
   }
 
   isRead() {
-    return this.values.r;
+    return this.options.r;
   }
 
   isEdit() {
-    return this.values.e;
+    return this.options.e;
   }
 }

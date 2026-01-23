@@ -25,30 +25,27 @@ db.run(
               db.run(
                 "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
                 () => {
-                  db.run(
-                    "INSERT INTO books (title) VALUES (null)",
-                    (insertErr) => {
-                      if (insertErr) {
-                        if (insertErr.code === "SQLITE_CONSTRAINT") {
-                          console.error(`INSERTエラー：${insertErr.message}`);
+                  db.run("INSERT INTO books (title) VALUES (null)", (err) => {
+                    if (err) {
+                      if (err.code === "SQLITE_CONSTRAINT") {
+                        console.error(`INSERTエラー：${err.message}`);
+                      } else {
+                        throw err;
+                      }
+                    }
+                    db.all("SELECT id, author FROM books", (err) => {
+                      if (err) {
+                        if (err.code === "SQLITE_ERROR") {
+                          console.error(`SELECTエラー：${err.message}`);
                         } else {
-                          throw insertErr;
+                          throw err;
                         }
                       }
-                      db.all("SELECT id, author FROM books", (selectErr) => {
-                        if (selectErr) {
-                          if (selectErr.code === "SQLITE_ERROR") {
-                            console.error(`SELECTエラー：${selectErr.message}`);
-                          } else {
-                            throw selectErr;
-                          }
-                        }
-                        db.run("DROP TABLE books", () => {
-                          db.close();
-                        });
+                      db.run("DROP TABLE books", () => {
+                        db.close();
                       });
-                    },
-                  );
+                    });
+                  });
                 },
               );
             });

@@ -48,21 +48,21 @@ runAsync(
   .then(() => {
     return runAsync(db, "INSERT INTO books (title) VALUES (null)");
   })
-  .catch((insertErr) => {
-    if (insertErr.code === "SQLITE_CONSTRAINT") {
-      console.error(`INSERTエラー：${insertErr.message}`);
+  .catch((err) => {
+    if (err.code === "SQLITE_CONSTRAINT") {
+      console.error(`INSERTエラー：${err.message}`);
     } else {
-      throw insertErr;
+      throw err;
     }
   })
   .then(() => {
     return allAsync(db, "SELECT id, author FROM books");
   })
-  .catch((selectErr) => {
-    if (selectErr.code === "SQLITE_ERROR") {
-      console.error(`SELECTエラー：${selectErr.message}`);
+  .catch((err) => {
+    if (err.code === "SQLITE_ERROR") {
+      console.error(`SELECTエラー：${err.message}`);
     } else {
-      throw selectErr;
+      throw err;
     }
   })
   .finally(() => {

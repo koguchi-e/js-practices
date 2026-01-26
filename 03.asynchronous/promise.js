@@ -31,8 +31,6 @@ runAsync(
     rows.forEach((row) => {
       console.log(`${row.id}: ${row.title}`);
     });
-  })
-  .then(() => {
     return runAsync(db, "DROP TABLE books");
   })
   // エラーありのプログラム

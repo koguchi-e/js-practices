@@ -5,11 +5,19 @@ export class MemoDatabase {
     this.db = new sqlite3.Database("memo.db");
   }
 
-  init(callback) {
-    this.db.run(
-      "CREATE TABLE IF NOT EXISTS memos (id INTEGER PRIMARY KEY AUTOINCREMENT, body TEXT NOT NULL)",
-      callback,
-    );
+  init() {
+    return new Promise((resolve, reject) => {
+      this.db.run(
+        "CREATE TABLE IF NOT EXISTS memos (id INTEGER PRIMARY KEY AUTOINCREMENT, body TEXT NOT NULL)",
+        (err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        },
+      );
+    });
   }
 
   insert(body, callback) {

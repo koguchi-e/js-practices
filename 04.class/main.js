@@ -12,10 +12,9 @@ class Main {
     this.db = new MemoDatabase();
     this.memoApp = new MemoApp(this.command, this.db);
   }
-  run() {
-    this.db.init(() => {
-      this.memoApp.run();
-    });
+  async run() {
+    await this.db.init();
+    await this.memoApp.run();
   }
 }
 

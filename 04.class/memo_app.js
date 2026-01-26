@@ -14,20 +14,20 @@ export class MemoApp {
     this.db = db;
   }
 
-  run() {
-    this.db.init(() => {
-      if (this.command.isAdd()) {
-        this.add();
-      } else if (this.command.isList()) {
-        this.list();
-      } else if (this.command.isDelete()) {
-        this.delete();
-      } else if (this.command.isRead()) {
-        this.read();
-      } else if (this.command.isEdit()) {
-        this.edit();
-      }
-    });
+  async run() {
+    await this.db.init();
+
+    if (this.command.isAdd()) {
+      await this.add();
+    } else if (this.command.isList()) {
+      await this.list();
+    } else if (this.command.isDelete()) {
+      await this.delete();
+    } else if (this.command.isRead()) {
+      await this.read();
+    } else if (this.command.isEdit()) {
+      await this.edit();
+    }
   }
 
   add() {

@@ -29,28 +29,30 @@ try {
   console.error(`エラー： ${err.message}`);
 }
 // エラーあり
-await runAsync(
-  db,
-  "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
-);
 try {
-  await runAsync(db, "INSERT INTO books (title) VALUES (null)");
-} catch (err) {
-  if (err && typeof err === "object" && err.code === "SQLITE_CONSTRAINT") {
-    console.error(`INSERTエラー：${err.message}`);
-  } else {
-    throw err;
+  await runAsync(
+    db,
+    "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
+  );
+  try {
+    await runAsync(db, "INSERT INTO books (title) VALUES (null)");
+  } catch (err) {
+    if (err && typeof err === "object" && err.code === "SQLITE_CONSTRAINT") {
+      console.error(`INSERTエラー：${err.message}`);
+    } else {
+      throw err;
+    }
   }
-}
-try {
-  await allAsync(db, "SELECT id, author FROM books");
-} catch (err) {
-  if (err && typeof err === "object" && err.code === "SQLITE_ERROR") {
-    console.error(`SELECTエラー：${err.message}`);
-  } else {
-    throw err;
+  try {
+    await allAsync(db, "SELECT id, author FROM books");
+  } catch (err) {
+    if (err && typeof err === "object" && err.code === "SQLITE_ERROR") {
+      console.error(`SELECTエラー：${err.message}`);
+    } else {
+      throw err;
+    }
+    await runAsync(db, "DROP TABLE books");
   }
-  await runAsync(db, "DROP TABLE books");
 } finally {
   await closeAsync(db);
 }

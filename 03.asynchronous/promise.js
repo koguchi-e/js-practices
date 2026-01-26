@@ -32,9 +32,6 @@ runAsync(
       console.log(`${row.id}: ${row.title}`);
     });
   })
-  .catch((err) => {
-    console.error(err);
-  })
   .then(() => {
     return runAsync(db, "DROP TABLE books");
   })

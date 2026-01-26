@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import sqlite3 from "sqlite3";
-import { runAsync, allAsync } from "./sqlite3-promise.js";
+import { runAsync, allAsync, closeAsync } from "./sqlite3-promise.js";
 
 const db = new sqlite3.Database(":memory:");
 
@@ -57,4 +57,4 @@ runAsync(
     }
   })
   .then(() => runAsync(db, "DROP TABLE books"))
-  .finally(() => db.close());
+  .finally(() => closeAsync(db));

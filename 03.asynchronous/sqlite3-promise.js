@@ -1,4 +1,4 @@
-export { runAsync, allAsync };
+export { runAsync, allAsync, closeAsync };
 
 function runAsync(db, sql, params) {
   return new Promise((resolve, reject) => {
@@ -19,6 +19,18 @@ function allAsync(db, sql, params) {
         reject(err);
       } else {
         resolve(rows);
+      }
+    });
+  });
+}
+
+function closeAsync(db) {
+  return new Promise((resolve, reject) => {
+    db.close((err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
       }
     });
   });

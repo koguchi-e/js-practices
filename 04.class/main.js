@@ -13,8 +13,12 @@ class Main {
     this.memoApp = new MemoApp(this.command, this.db);
   }
   async run() {
-    await this.db.init();
-    await this.memoApp.run();
+    try {
+      await this.db.init();
+      await this.memoApp.run();
+    } finally {
+      await this.db.close();
+    }
   }
 }
 

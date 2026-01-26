@@ -20,31 +20,79 @@ export class MemoDatabase {
     });
   }
 
-  insert(body, callback) {
-    const stmt = this.db.prepare("INSERT INTO memos (body) VALUES (?)");
-    stmt.run(body, (err) => {
-      stmt.finalize();
-      callback(err);
+  insert(body) {
+    return new Promise((resolve, reject) => {
+      this.db.run("INSERT INTO memos (body) VALUES (?)", [body], (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
     });
   }
 
-  findAll(callback) {
-    this.db.all("SELECT * FROM memos ORDER BY id", callback);
+  findAll() {
+    return new Promise((resolve, reject) => {
+      this.db.all("SELECT * FROM memos ORDER BY id", (err, rows) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
   }
 
-  findMemoById(id, callback) {
-    this.db.get("SELECT body FROM memos WHERE id = ?", [id], callback);
+  findMemoById(id) {
+    return new Promise((resolve, reject) => {
+      this.db.get("SELECT body FROM memos WHERE id = ?", [id], (err, row) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row);
+        }
+      });
+    });
   }
 
-  deleteMemoById(id, callback) {
-    this.db.run("DELETE FROM memos WHERE id = ?", [id], callback);
+  deleteMemoById(id) {
+    return new Promise((resolve, reject) => {
+      this.db.run("DELETE FROM memos WHERE id = ?", [id], (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
   }
 
-  updateMemoById(id, body, callback) {
-    this.db.run("UPDATE memos SET body = ? WHERE id = ?", [body, id], callback);
+  updateMemoById(id, body) {
+    return new Promise((resolve, reject) => {
+      this.db.run(
+        "UPDATE memos SET body = ? WHERE id = ?",
+        [body, id],
+        (err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        },
+      );
+    });
   }
 
   close() {
-    this.db.close();
+    return new Promise((resolve, reject) => {
+      this.db.close((err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
   }
 }

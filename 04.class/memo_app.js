@@ -15,8 +15,6 @@ export class MemoApp {
   }
 
   async run() {
-    await this.db.init();
-
     if (this.command.isAdd()) {
       await this.add();
     } else if (this.command.isList()) {
@@ -30,130 +28,83 @@ export class MemoApp {
     }
   }
 
-  add() {
+  async add() {
     let memoBody = "";
 
-    const reader = readline.createInterface({
-      input: process.stdin,
-    });
+    await new Promise((resolve) => {
+      const reader = readline.createInterface({
+        input: process.stdin,
+      });
 
-    reader.on("line", (line) => {
-      memoBody += line + "\n";
-    });
+      reader.on("line", (line) => {
+        memoBody += line + "\n";
+      });
 
-    reader.on("close", () => {
-      this.db.insert(memoBody, () => {
+      reader.on("close", async () => {
+        await this.db.insert(memoBody);
         console.log("以下メモが登録されました----");
         console.log(memoBody);
-        this.db.close();
+        resolve();
       });
     });
   }
 
-  list() {
+  async list() {
     console.log("メモ一覧----");
-    this.db.findAll((err, rows) => {
-      if (err) {
-        console.error(err);
-        return;
-      } else {
-        rows.forEach((row) => {
-          console.log(`[${row.id}] ${row.body.split("\n")[0]}`);
-        });
-      }
-      this.db.close();
+    const rows = await this.db.findAll();
+    rows.forEach((row) => {
+      console.log(`[${row.id}] ${row.body.split("\n")[0]}`);
     });
   }
 
-  selectMemo(message, callback) {
-    this.db.findAll((err, rows) => {
-      if (err) {
-        console.error(err);
-        return;
-      } else {
-        const choices = rows.map(
-          (row) => `[${row.id}] ${row.body.split("\n")[0]}`,
-        );
+  async selectMemo(message) {
+    const rows = await this.db.findAll();
+    const choices = rows.map((row) => `[${row.id}] ${row.body.split("\n")[0]}`);
 
-        const prompt = new Select({
-          name: "memo",
-          message,
-          choices,
-        });
-
-        prompt.run().then((selected) => {
-          console.log("選択結果：", selected);
-          const id = Number(selected.match(/^\[(\d+)\]/)[1]);
-          callback(id);
-        });
-      }
+    const prompt = new Select({
+      name: "memo",
+      message,
+      choices,
     });
+
+    const selected = await prompt.run();
+    const id = Number(selected.match(/^\[(\d+)\]/)[1]);
+    return id;
   }
 
-  delete() {
-    this.selectMemo("削除するメモを選択してください。", (id) => {
-      this.db.deleteMemoById(id, (err) => {
-        if (err) {
-          console.error(err);
-          return;
-        }
-        this.db.close();
-      });
-    });
+  async delete() {
+    const id = await this.selectMemo("削除するメモを選択してください。");
+    await this.db.deleteMemoById(id);
   }
 
-  read() {
-    this.selectMemo("参照するメモを選択してください。", (id) => {
-      this.db.findMemoById(id, (err, row) => {
-        if (err) {
-          console.error(err);
-          return;
-        } else {
-          console.log("メモ本文----");
-          console.log(row.body);
-        }
-        this.db.close();
-      });
-    });
+  async read() {
+    const id = await this.selectMemo("参照するメモを選択してください。");
+    const row = await this.db.findMemoById(id);
+    console.log("メモ本文----");
+    console.log(row.body);
   }
 
-  edit() {
-    this.selectMemo("編集するメモを選択してください。", (id) => {
-      if (!editor) {
-        console.error("EDITOR 環境変数が設定されていません。");
-        process.exit(1);
-      } else {
-        this.db.findMemoById(id, (err, row) => {
-          fs.writeFile("./memo.txt", row.body, "utf8", (err) => {
-            if (err) {
-              console.log(err);
-            } else {
-              spawnSync(editor, ["-w", "./memo.txt"], {
-                stdio: "inherit",
-              });
-              const editBody = fs.readFileSync("./memo.txt", "utf8");
-              this.db.updateMemoById(id, editBody, (err) => {
-                if (err) {
-                  console.error(err);
-                  return;
-                } else {
-                  this.db.findMemoById(id, (err, row) => {
-                    if (err) {
-                      console.error(err);
-                      return;
-                    } else {
-                      console.log("編集結果----");
-                      console.log(row.body);
-                      fs.unlinkSync("./memo.txt");
-                      this.db.close();
-                    }
-                  });
-                }
-              });
-            }
-          });
-        });
-      }
-    });
+  async edit() {
+    const id = await this.selectMemo("編集するメモを選択してください。");
+    if (!editor) {
+      console.error("EDITOR 環境変数が設定されていません。");
+      process.exit(1);
+    } else {
+      const row = await this.db.findMemoById(id);
+
+      fs.writeFile("./memo.txt", row.body, "utf8");
+
+      spawnSync(editor, ["-w", "./memo.txt"], { stdio: "inherit" });
+
+      const editBody = fs.readFileSync("./memo.txt", "utf8");
+
+      await this.db.updateMemoById(id, editBody);
+
+      const updated = await this.db.findMemoById(id);
+      console.log("編集結果----");
+      console.log(updated.body);
+
+      fs.unlinkSync("./memo.txt");
+    }
   }
 }

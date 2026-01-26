@@ -36,7 +36,7 @@ await runAsync(
 try {
   await runAsync(db, "INSERT INTO books (title) VALUES (null)");
 } catch (err) {
-  if (err.code === "SQLITE_CONSTRAINT") {
+  if (err && typeof err === "object" && err.code === "SQLITE_CONSTRAINT") {
     console.error(`INSERTエラー：${err.message}`);
   } else {
     throw err;
@@ -45,7 +45,7 @@ try {
 try {
   await allAsync(db, "SELECT id, author FROM books");
 } catch (err) {
-  if (err.code === "SQLITE_ERROR") {
+  if (err && typeof err === "object" && err.code === "SQLITE_ERROR") {
     console.error(`SELECTエラー：${err.message}`);
   } else {
     throw err;

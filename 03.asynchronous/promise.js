@@ -56,8 +56,5 @@ runAsync(
       throw err;
     }
   })
-  .finally(() => {
-    return runAsync(db, "DROP TABLE books").finally(() => {
-      db.close();
-    });
-  });
+  .then(() => runAsync(db, "DROP TABLE books"))
+  .finally(() => db.close());

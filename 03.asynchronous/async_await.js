@@ -58,7 +58,7 @@ try {
   } else {
     throw err;
   }
-} finally {
   await runAsync(db, "DROP TABLE books");
+} finally {
   db.close();
 }

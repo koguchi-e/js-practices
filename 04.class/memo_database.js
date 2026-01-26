@@ -21,7 +21,7 @@ export class MemoDatabase {
   }
 
   findAll(callback) {
-    this.db.all("SELECT * FROM memos", callback);
+    this.db.all("SELECT * FROM memos ORDER BY id", callback);
   }
 
   findMemoById(id, callback) {

@@ -29,16 +29,12 @@ db.run(
                     if (err) {
                       if (err.code === "SQLITE_CONSTRAINT") {
                         console.error(`INSERTエラー：${err.message}`);
-                      } else {
-                        throw err;
                       }
                     }
                     db.all("SELECT id, author FROM books", (err) => {
                       if (err) {
                         if (err.code === "SQLITE_ERROR") {
                           console.error(`SELECTエラー：${err.message}`);
-                        } else {
-                          throw err;
                         }
                       }
                       db.run("DROP TABLE books", () => {

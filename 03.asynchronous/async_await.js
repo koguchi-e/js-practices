@@ -12,21 +12,13 @@ try {
     db,
     "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
   );
-  const firstInsertResult = await runAsync(
-    db,
-    "INSERT INTO books (title) VALUES ('走れメロス')",
-  );
-  console.log(`${firstInsertResult.lastID}：走れメロス`);
-  const secondInsertResult = await runAsync(
-    db,
-    "INSERT INTO books (title) VALUES ('こころ')",
-  );
-  console.log(`${secondInsertResult.lastID}：こころ`);
-  const thirdInsertResult = await runAsync(
-    db,
-    "INSERT INTO books (title) VALUES ('山月記')",
-  );
-  console.log(`${thirdInsertResult.lastID}：山月記`);
+  let stmt;
+  stmt = await runAsync(db, "INSERT INTO books (title) VALUES ('走れメロス')");
+  console.log(`${stmt.lastID}：走れメロス`);
+  stmt = await runAsync(db, "INSERT INTO books (title) VALUES ('こころ')");
+  console.log(`${stmt.lastID}：こころ`);
+  stmt = await runAsync(db, "INSERT INTO books (title) VALUES ('山月記')");
+  console.log(`${stmt.lastID}：山月記`);
   console.log("レコードを取得し、それを標準出力に出力する");
   const rows = await allAsync(db, "SELECT id, title FROM books ORDER BY id");
   rows.forEach((row) => {

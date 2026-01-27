@@ -8,7 +8,7 @@ import { MemoApp } from "./memo_app.js";
 
 class Main {
   constructor() {
-    this.command = new Command(process.argv);
+    this.command = new Command();
     this.db = new MemoDatabase();
     this.memoApp = new MemoApp(this.command, this.db);
   }

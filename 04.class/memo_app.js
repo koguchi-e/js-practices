@@ -1,8 +1,7 @@
 import readline from "node:readline";
 import enquirer from "enquirer";
-import "dotenv/config";
-import fs from "node:fs/promises";
 
+import fs from "node:fs/promises";
 import { spawnSync } from "node:child_process";
 
 const { Select } = enquirer;

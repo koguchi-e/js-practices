@@ -57,7 +57,7 @@ export class MemoApp {
     });
   }
 
-  async selectMemo(message) {
+  async select(message) {
     const rows = await this.db.findAll();
     const choices = rows.map((row) => `[${row.id}] ${row.body.split("\n")[0]}`);
 
@@ -73,19 +73,19 @@ export class MemoApp {
   }
 
   async delete() {
-    const id = await this.selectMemo("削除するメモを選択してください。");
+    const id = await this.select("削除するメモを選択してください。");
     await this.db.deleteMemoById(id);
   }
 
   async read() {
-    const id = await this.selectMemo("参照するメモを選択してください。");
+    const id = await this.select("参照するメモを選択してください。");
     const row = await this.db.findMemoById(id);
     console.log("メモ本文----");
     console.log(row.body);
   }
 
   async edit() {
-    const id = await this.selectMemo("編集するメモを選択してください。");
+    const id = await this.select("編集するメモを選択してください。");
     if (!editor) {
       console.error("EDITOR 環境変数が設定されていません。");
       process.exit(1);

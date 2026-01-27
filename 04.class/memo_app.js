@@ -1,7 +1,7 @@
 import readline from "node:readline";
 import enquirer from "enquirer";
 import "dotenv/config";
-import fs from "fs";
+import fs from "node:fs/promises";
 
 import { spawnSync } from "node:child_process";
 
@@ -86,25 +86,26 @@ export class MemoApp {
 
   async edit() {
     const id = await this.select("編集するメモを選択してください。");
+
     if (!editor) {
       console.error("EDITOR 環境変数が設定されていません。");
       process.exit(1);
-    } else {
-      const row = await this.db.findMemoById(id);
-
-      fs.writeFile("./memo.txt", row.body, "utf8");
-
-      spawnSync(editor, ["-w", "./memo.txt"], { stdio: "inherit" });
-
-      const editBody = fs.readFileSync("./memo.txt", "utf8");
-
-      await this.db.updateMemoById(id, editBody);
-
-      const updated = await this.db.findMemoById(id);
-      console.log("編集結果----");
-      console.log(updated.body);
-
-      fs.unlinkSync("./memo.txt");
     }
+
+    const row = await this.db.findMemoById(id);
+
+    await fs.writeFile("./memo.txt", row.body, "utf8");
+
+    spawnSync(editor, ["-w", "./memo.txt"], { stdio: "inherit" });
+
+    const editBody = await fs.readFile("./memo.txt", "utf8");
+
+    await this.db.updateMemoById(id, editBody);
+
+    const updated = await this.db.findMemoById(id);
+    console.log("編集結果----");
+    console.log(updated.body);
+
+    await fs.unlink("./memo.txt");
   }
 }

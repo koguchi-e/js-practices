@@ -17,7 +17,7 @@ class Main {
       await this.db.init();
       await this.memoApp.run();
     } finally {
-      await this.db.close();
+      await this.db.closeDatabase();
     }
   }
 }

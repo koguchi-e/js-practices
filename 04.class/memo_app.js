@@ -18,12 +18,12 @@ export class MemoApp {
       await this.add();
     } else if (this.command.isList()) {
       await this.list();
-    } else if (this.command.isDelete()) {
-      await this.delete();
     } else if (this.command.isRead()) {
       await this.read();
     } else if (this.command.isEdit()) {
       await this.edit();
+    } else if (this.command.isDelete()) {
+      await this.delete();
     }
   }
 
@@ -56,26 +56,6 @@ export class MemoApp {
     });
   }
 
-  async select(message) {
-    const rows = await this.db.findAll();
-    const choices = rows.map((row) => `[${row.id}] ${row.body.split("\n")[0]}`);
-
-    const prompt = new Select({
-      name: "memo",
-      message,
-      choices,
-    });
-
-    const selected = await prompt.run();
-    const id = Number(selected.match(/^\[(\d+)\]/)[1]);
-    return id;
-  }
-
-  async delete() {
-    const id = await this.select("削除するメモを選択してください。");
-    await this.db.deleteMemoById(id);
-  }
-
   async read() {
     const id = await this.select("参照するメモを選択してください。");
     const row = await this.db.findMemoById(id);
@@ -106,5 +86,25 @@ export class MemoApp {
     console.log(updated.body);
 
     await fs.unlink("./memo.txt");
+  }
+
+  async delete() {
+    const id = await this.select("削除するメモを選択してください。");
+    await this.db.deleteMemoById(id);
+  }
+
+  async select(message) {
+    const rows = await this.db.findAll();
+    const choices = rows.map((row) => `[${row.id}] ${row.body.split("\n")[0]}`);
+
+    const prompt = new Select({
+      name: "memo",
+      message,
+      choices,
+    });
+
+    const selected = await prompt.run();
+    const id = Number(selected.match(/^\[(\d+)\]/)[1]);
+    return id;
   }
 }

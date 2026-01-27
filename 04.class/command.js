@@ -15,16 +15,12 @@ export class Command {
 
   isAdd() {
     return (
-      !this.options.l && !this.options.d && !this.options.r && !this.options.e
+      !this.options.l && !this.options.r && !this.options.e && !this.options.d
     );
   }
 
   isList() {
     return this.options.l;
-  }
-
-  isDelete() {
-    return this.options.d;
   }
 
   isRead() {
@@ -33,5 +29,9 @@ export class Command {
 
   isEdit() {
     return this.options.e;
+  }
+
+  isDelete() {
+    return this.options.d;
   }
 }

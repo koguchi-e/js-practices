@@ -8,23 +8,8 @@ const { Select } = enquirer;
 const editor = process.env.EDITOR;
 
 export class MemoApp {
-  constructor(command, db) {
-    this.command = command;
+  constructor(db) {
     this.db = db;
-  }
-
-  async run() {
-    if (this.command.isAdd()) {
-      await this.add();
-    } else if (this.command.isList()) {
-      await this.list();
-    } else if (this.command.isRead()) {
-      await this.read();
-    } else if (this.command.isEdit()) {
-      await this.edit();
-    } else if (this.command.isDelete()) {
-      await this.delete();
-    }
   }
 
   async add() {

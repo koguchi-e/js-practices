@@ -1,7 +1,7 @@
 import { parseArgs } from "node:util";
 
 export class Command {
-  constructor() {
+  constructor(memoApp) {
     const { values } = parseArgs({
       options: {
         l: { type: "boolean" },
@@ -11,6 +11,21 @@ export class Command {
       },
     });
     this.options = values;
+    this.memoApp = memoApp;
+  }
+
+  async run() {
+    if (this.isAdd()) {
+      await this.memoApp.add();
+    } else if (this.isList()) {
+      await this.memoApp.list();
+    } else if (this.isRead()) {
+      await this.memoApp.read();
+    } else if (this.isEdit()) {
+      await this.memoApp.edit();
+    } else if (this.isDelete()) {
+      await this.memoApp.delete();
+    }
   }
 
   isAdd() {

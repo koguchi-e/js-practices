@@ -26,22 +26,15 @@ db.run(
                 "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
                 () => {
                   db.run("INSERT INTO books (title) VALUES (null)", (err) => {
-                    if (err) {
-                      if (
-                        err instanceof Error &&
-                        err.code === "SQLITE_CONSTRAINT"
-                      ) {
-                        console.error(`INSERTエラー：${err.message}`);
-                      }
+                    if (
+                      err instanceof Error &&
+                      err.code === "SQLITE_CONSTRAINT"
+                    ) {
+                      console.error(`INSERTエラー：${err.message}`);
                     }
                     db.all("SELECT id, author FROM books", (err) => {
-                      if (err) {
-                        if (
-                          err instanceof Error &&
-                          err.code === "SQLITE_ERROR"
-                        ) {
-                          console.error(`SELECTエラー：${err.message}`);
-                        }
+                      if (err instanceof Error && err.code === "SQLITE_ERROR") {
+                        console.error(`SELECTエラー：${err.message}`);
                       }
                       db.run("DROP TABLE books", () => {
                         db.close();

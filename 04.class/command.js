@@ -1,7 +1,8 @@
 import { parseArgs } from "node:util";
+import { MemoApp } from "./memo_app.js";
 
 export class Command {
-  constructor(memoApp) {
+  constructor(db) {
     const { values } = parseArgs({
       options: {
         l: { type: "boolean" },
@@ -11,7 +12,7 @@ export class Command {
       },
     });
     this.options = values;
-    this.memoApp = memoApp;
+    this.memoApp = new MemoApp(db);
   }
 
   async run() {

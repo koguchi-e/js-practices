@@ -40,21 +40,23 @@ runAsync(
       "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",
     ),
   )
-  .then(() => runAsync(db, "INSERT INTO books (title) VALUES (null)"))
-  .catch((err) => {
-    if (err instanceof Error && err.code === "SQLITE_CONSTRAINT") {
-      console.error(`INSERTエラー：${err.message}`);
-    } else {
+  .then(() =>
+    runAsync(db, "INSERT INTO books (title) VALUES (null)").catch((err) => {
+      if (err instanceof Error && err.code === "SQLITE_CONSTRAINT") {
+        console.error(`INSERTエラー：${err.message}`);
+        return;
+      }
       throw err;
-    }
-  })
-  .then(() => allAsync(db, "SELECT id, author FROM books"))
-  .catch((err) => {
-    if (err instanceof Error && err.code === "SQLITE_ERROR") {
-      console.error(`SELECTエラー：${err.message}`);
-    } else {
+    }),
+  )
+  .then(() =>
+    allAsync(db, "SELECT id, author FROM books").catch((err) => {
+      if (err instanceof Error && err.code === "SQLITE_ERROR") {
+        console.error(`SELECTエラー：${err.message}`);
+        return;
+      }
       throw err;
-    }
-  })
+    }),
+  )
   .then(() => runAsync(db, "DROP TABLE books"))
   .finally(() => closeAsync(db));

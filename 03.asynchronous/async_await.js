@@ -50,8 +50,8 @@ try {
     } else {
       throw err;
     }
-    await runAsync(db, "DROP TABLE books");
   }
+  await runAsync(db, "DROP TABLE books");
 } finally {
   await closeAsync(db);
 }

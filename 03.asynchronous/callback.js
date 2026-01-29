@@ -28,8 +28,7 @@ db.run(
                   db.run("INSERT INTO books (title) VALUES (null)", (err) => {
                     if (err) {
                       if (
-                        err &&
-                        typeof err === "object" &&
+                        err instanceof Error &&
                         err.code === "SQLITE_CONSTRAINT"
                       ) {
                         console.error(`INSERTエラー：${err.message}`);
@@ -38,8 +37,7 @@ db.run(
                     db.all("SELECT id, author FROM books", (err) => {
                       if (err) {
                         if (
-                          err &&
-                          typeof err === "object" &&
+                          err instanceof Error &&
                           err.code === "SQLITE_ERROR"
                         ) {
                           console.error(`SELECTエラー：${err.message}`);

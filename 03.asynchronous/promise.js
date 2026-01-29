@@ -42,7 +42,7 @@ runAsync(
   )
   .then(() => runAsync(db, "INSERT INTO books (title) VALUES (null)"))
   .catch((err) => {
-    if (err && typeof err === "object" && err.code === "SQLITE_CONSTRAINT") {
+    if (err instanceof Error && err.code === "SQLITE_CONSTRAINT") {
       console.error(`INSERTエラー：${err.message}`);
     } else {
       throw err;
@@ -50,7 +50,7 @@ runAsync(
   })
   .then(() => allAsync(db, "SELECT id, author FROM books"))
   .catch((err) => {
-    if (err && typeof err === "object" && err.code === "SQLITE_ERROR") {
+    if (err instanceof Error && err.code === "SQLITE_ERROR") {
       console.error(`SELECTエラー：${err.message}`);
     } else {
       throw err;

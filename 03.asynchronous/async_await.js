@@ -24,11 +24,10 @@ try {
   rows.forEach((row) => {
     console.log(`${row.id}: ${row.title}`);
   });
-} finally {
+
   await runAsync(db, "DROP TABLE books");
-}
-// エラーあり
-try {
+
+  // エラーあり
   await runAsync(
     db,
     "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE NOT NULL)",

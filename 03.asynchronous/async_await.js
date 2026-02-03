@@ -24,9 +24,7 @@ try {
   rows.forEach((row) => {
     console.log(`${row.id}: ${row.title}`);
   });
-
   await runAsync(db, "DROP TABLE books");
-
   // エラーあり
   await runAsync(
     db,

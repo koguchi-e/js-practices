@@ -44,17 +44,17 @@ runAsync(
   .catch((err) => {
     if (err instanceof Error && err.code === "SQLITE_CONSTRAINT") {
       console.error(`INSERTエラー：${err.message}`);
-      return;
+      return allAsync(db, "SELECT id, author FROM books");
+    } else {
+      throw err;
     }
-    throw err;
   })
-  .then(() => allAsync(db, "SELECT id, author FROM books"))
   .catch((err) => {
     if (err instanceof Error && err.code === "SQLITE_ERROR") {
       console.error(`SELECTエラー：${err.message}`);
-      return;
+      return runAsync(db, "DROP TABLE books");
+    } else {
+      throw err;
     }
-    throw err;
   })
-  .then(() => runAsync(db, "DROP TABLE books"))
   .finally(() => closeAsync(db));
